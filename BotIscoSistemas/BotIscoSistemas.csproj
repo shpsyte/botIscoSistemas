@@ -160,7 +160,7 @@
     </Content>
     <Content Include="README.md" />
     <Content Include="Dialogs\Qna\Sensebot.xlsx" />
-    <None Include="Properties\PublishProfiles\botblog - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\botdaisco - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

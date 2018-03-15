@@ -43,9 +43,6 @@ namespace Bot4App.Forms
         [Prompt("Ok, quer me falar algo mais, como detalhes ?")]
         [Optional]
         public string Describe;
-        [Optional]
-        [Template(TemplateUsage.StatusFormat, "{&}: {:t}", FieldCase = CaseNormalization.None)]
-        public DateTime? ContactTime;
         [Describe("Qual problema com acesso ? ")]
         public string AccessOption;
         [Describe("Qual o usuário está usando ? ")]
@@ -103,7 +100,7 @@ namespace Bot4App.Forms
                 .Field(nameof(RegisterSuport.Titulo), isFinanceiro)
                 .Field(nameof(RegisterSuport.Teamview), isTV)
                // .Confirm("O Teaview v12 {Teamview}, está correto ? ", isTV)
-                .Field(nameof(RegisterSuport.ContactTime), "Qual o horário que podemos conectar pelo Teamview ? {||}", isTV)
+                //.Field(nameof(RegisterSuport.ContactTime), "Qual o horário que podemos conectar pelo Teamview ? {&}", isTV)
                 .AddRemainingFields()
                 //.Confirm("Ok, {Name}, já estou em contato {?at {DeliveryTime:t}}?")
                 .Build();
@@ -145,9 +142,7 @@ namespace Bot4App.Forms
             if (!string.IsNullOrEmpty(Describe))
                 builder.AppendFormat(" Describe: {0}, \n ", Describe);
 
-            if (ContactTime.HasValue)
-                builder.AppendFormat(" Retornar as:  {0}, \n ", ContactTime);
-
+          
 
 
 
