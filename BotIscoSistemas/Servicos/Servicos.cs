@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
@@ -77,25 +78,104 @@ namespace Bot4App.Services
 
 
 
-        public static Task SendEmail(string subject, string body)
+        public static Task SendEmail(string subject, string body, string from, string to, string[] cc = null)
         {
-            MailMessage mail = new MailMessage("jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
+          
+            if (string.IsNullOrEmpty(to))
+                to = "jose.luiz@iscosistemas.com";
+
+            MailMessage mail = new MailMessage("jose.luiz@iscosistemas.com", to, subject, body);
+            mail.ReplyToList.Add(new MailAddress(from));
+            mail.Priority = MailPriority.High;
+           // mail.Sender = new MailAddress(from);
+
+
+
+            if (cc.Length > 0)
+            {
+                foreach (var item in cc)
+                {
+                    mail.CC.Add(item);
+                }
+            }
+
             SmtpClient client = new SmtpClient();
             client.Port = 587;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.UseDefaultCredentials = false;
-            client.Timeout = 10000;
             client.Credentials = new System.Net.NetworkCredential("jose.luiz@iscosistemas.com", "Jymkatana_6985");
+            client.UseDefaultCredentials = true;
+            client.Timeout = 1000;
             client.Host = "mail.iscosistemas.com";
-            mail.Subject = subject;
-            mail.Body = body;
+
+
             client.SendMailAsync(mail);
+            //client.Send(mail);
 
             return null;
 
         }
+
+        internal static Task SendEmail(string v1, string v2, string email, object emailSuporte, string[] v3)
+        {
+            throw new NotImplementedException();
+        }
     }
 
+
+    public class ValidaDocumento
+    {
+        public static bool IsCnpj(string cnpj)
+        {
+            int[] multiplicador1 = new int[12] { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+            int[] multiplicador2 = new int[13] { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+            int soma;
+            int resto;
+            string digito;
+            string tempCnpj;
+
+            cnpj = cnpj.Trim();
+            cnpj = cnpj.Replace(".", "").Replace("-", "").Replace("/", "");
+
+            if (cnpj.Length != 14)
+                return false;
+
+            tempCnpj = cnpj.Substring(0, 12);
+
+            soma = 0;
+            for (int i = 0; i < 12; i++)
+                soma += int.Parse(tempCnpj[i].ToString()) * multiplicador1[i];
+
+            resto = (soma % 11);
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+
+            digito = resto.ToString();
+
+            tempCnpj = tempCnpj + digito;
+            soma = 0;
+            for (int i = 0; i < 13; i++)
+                soma += int.Parse(tempCnpj[i].ToString()) * multiplicador2[i];
+
+            resto = (soma % 11);
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+
+            digito = digito + resto.ToString();
+
+            return cnpj.EndsWith(digito);
+        }
+
+        public static string getNumber(string s)
+        {
+            return Regex.Match(s, @"\d+").Value;
+        }
+
+
+    }
 
 
 

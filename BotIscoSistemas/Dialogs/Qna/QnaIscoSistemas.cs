@@ -3,26 +3,25 @@ using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bot4App.QnA
 {
     [Serializable]
-    public class QnaSenseBot : QnAMakerDialog
+    public class QnaIscoSistemas : QnAMakerDialog
     {
-        private readonly static string _QnaKnowledgedId = KeyPassAndPhrase._QnaKnowledgedSenseId;
+        private readonly static string _QnaKnowledgedId = KeyPassAndPhrase._QnaKnowledgedIscoId;
         private readonly static string _QnaSubscriptionKey = KeyPassAndPhrase._QnaSubscriptionKey;
         private readonly static string _DefatulMsg = KeyPassAndPhrase._MsgNotUndertand;
         private readonly static double _Score = KeyPassAndPhrase._Score;
         private readonly static int _QtyAnswerReturn = KeyPassAndPhrase._QtyAnswerReturn;
-        
 
-        public QnaSenseBot() : base(new QnAMakerService(new QnAMakerAttribute(_QnaSubscriptionKey, _QnaKnowledgedId, _DefatulMsg, _Score, _QtyAnswerReturn)))
+        public QnaIscoSistemas() : base(new QnAMakerService(new QnAMakerAttribute(_QnaSubscriptionKey, _QnaKnowledgedId, _DefatulMsg, _Score, _QtyAnswerReturn)))
         {
 
         }
-
 
 
 
@@ -45,16 +44,31 @@ namespace Bot4App.QnA
 
         }
 
-
         ////// Override to log matched Q&A before ending the dialog
         protected override async Task DefaultWaitNextMessageAsync(IDialogContext context, IMessageActivity message, QnAMakerResults results)
         {
-            await base.DefaultWaitNextMessageAsync(context, message, results);
-            // await context.PostAsync("It taht");
+            
+
+            var answer = results.Answers.First().Answer;
+           
+            var userQuestion = (context.Activity as Activity).Text;
+
+            context.Call(new BotBlog.Dialogs.Qna.FeedbackDialog("url", userQuestion), ResumeAfterFeedback);
 
         }
 
 
+        private async Task ResumeAfterFeedback(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            if (await result != null)
+            {
+                await MessageReceivedAsync(context, result);
+            }
+            else
+            {
+                context.Done<IMessageActivity>(null);
+            }
+        }
 
 
         //// Qunado o ML está ativa este metodo pergunta: "Você quis dizer isso ?" para que o qna possa aprender.
@@ -71,7 +85,10 @@ namespace Bot4App.QnA
             }
         }
 
+
     }
 
 
 }
+
+

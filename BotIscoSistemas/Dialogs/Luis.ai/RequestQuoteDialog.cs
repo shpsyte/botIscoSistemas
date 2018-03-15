@@ -68,7 +68,7 @@ namespace Bot4App.Dialogs.Luis.ai
                 await context.PostAsync("Ok, enviado, logo algum representante lhe fará contato., lembre-se pode digitar **ajuda** \n" +
                     "Posso ajudar em algo mais ?");
 
-                await Services.Email.SendEmail("Sugstão de Artigo", order.ToString());
+              //  await Services.Email.SendEmail("Sugstão de Artigo", order.ToString());
 
                 
             }

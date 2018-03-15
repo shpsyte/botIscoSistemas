@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -24,6 +25,7 @@
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
     <Use64BitIISExpress />
+    <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -129,15 +131,14 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\Luis.ai\LuisBasicDialog.cs" />
+    <Compile Include="Dialogs\Dialog\RegisterSuportDialog.cs" />
     <Compile Include="Dialogs\Luis.ai\PayArticleDialog.cs" />
     <Compile Include="Dialogs\Luis.ai\SugestionArticleDialog.cs" />
     <Compile Include="Dialogs\Luis.ai\RequestQuoteDialog.cs" />
     <Compile Include="Dialogs\Qna\FeedbackDialog.cs" />
-    <Compile Include="Dialogs\Qna\QnaAboutMe.cs" />
-    <Compile Include="Dialogs\Qna\QnaSenseBot.cs" />
-    <Compile Include="Dialogs\Qna\QnaBlogSite.cs" />
-    <Compile Include="Dialogs\Qna\QnaGreeting.cs" />
+    <Compile Include="Dialogs\Qna\QnaIscoSistemas.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
+    <Compile Include="Forms\RegisterSuport.cs" />
     <Compile Include="Forms\Enums.cs" />
     <Compile Include="Forms\PayArticles.cs" />
     <Compile Include="Forms\SuggesetionArticle.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Domain.cs" />
     <Compile Include="Models\FakeList.cs" />
     <Compile Include="Models\KeyPass.cs" />
@@ -157,6 +159,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="README.md" />
+    <Content Include="Dialogs\Qna\Sensebot.xlsx" />
     <None Include="Properties\PublishProfiles\botblog - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -165,7 +168,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -174,6 +179,7 @@
     <EnableMSDeployAppOffline>true</EnableMSDeployAppOffline>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <ProjectExtensions>

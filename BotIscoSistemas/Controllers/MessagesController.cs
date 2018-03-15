@@ -16,8 +16,7 @@ namespace Bot4App
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-
-
+         
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
@@ -43,15 +42,15 @@ namespace Bot4App
                         {
                             //await this.SendConversation(activity);
                             var reply = activity.CreateReply();
-                            reply.Text = $"**( ͡° ͜ʖ ͡°)**  Oi sou um ChatBot, aprendendo todos os dias com as postagens... " ;
+                            reply.Text = $"**( ͡° ͜ʖ ͡°)**  {_msg} " ;
                             await connector.Conversations.ReplyToActivityAsync(reply);
 
-                            await SendBotIsTyping(activity);
 
 
-                            await Task.Delay(2000); // 4 second delay
-                            reply.Text = _msg;
-                            await connector.Conversations.ReplyToActivityAsync(reply);
+                            //await SendBotIsTyping(activity);
+                            //await Task.Delay(2000); // 4 second delay
+                            //reply.Text = _msg;
+                            //await connector.Conversations.ReplyToActivityAsync(reply);
 
                             //await SendBotIsTyping(message, client);
 

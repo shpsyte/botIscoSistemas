@@ -9,21 +9,20 @@ namespace BotBlog.Models
     {
 
         //msg
-        internal static string _MsgNotUndertand = $"Hum... Minha conciência não entende isso ainda, mas com certeza aprenderei mais sobre isso... ";
-        internal static string _MsgHelp = $"Posso te ajuda a :\n" +
-            "* **Encontrar artigos no blog**, \n" +
-            "* **Registrar Sugestão de artigos**, \n" +
-            "* **Contratar consultoria**, \n" +
-            "* **Anunciar conosco**, \n";
+        internal static string _MsgNotUndertand = $"Hum... Estou aprendendo isso ainda, vou falar com o **pessoal da Isco** para me explicar isso, ok ? ";
+        internal static string _MsgHelp = $"Eu sou o **Agente Virtual da Isco.** Eu ainda estou em treinamento e eu adoraria ajudá-lo. \n" +
+            " Você também pode pedir para conversar com uma pessoa a qualquer momento. Por favor, **descreva brevemente o problema** abaixo." ;
+
+        
 
         //luis
-        internal static string _LuisModelId = "646ff876-0858-4d57-9f6c-78e995779540";
+        internal static string _LuisModelId = "c0eabe53-c8cc-4a05-bdde-052b434b95b3";
         internal static string _LuiSubscriptionKey = "a8046f7776b7494db8f1ea873eac5c3e";
 
+
+
         //qna 
-        public readonly static string _QnaKnowledgedBlogId  = "d4254e4f-9925-45c7-9fdb-8bd018deaa8e";
-        public readonly static string _QnaKnowledgedSenseId = "b80c3d4a-e80c-436f-800c-16e9cc73f402";
-        public readonly static string _QnaKnowledgedJoseId = "1d8246fb-49ff-4178-86dd-f5c17070357a";
+        public readonly static string _QnaKnowledgedIscoId  = "c2a14c09-4859-4a46-84de-2ce0cd01f6b1";
         
 
         public readonly static string _QnaSubscriptionKey = "ac1a50f16e0b400f93e81d87eea081fc"; 
@@ -31,6 +30,10 @@ namespace BotBlog.Models
         public readonly static int _QtyAnswerReturn = 3;
 
 
+
+        ///api isco
+        public readonly static string endpointCustomer = $"http://www.api.iscosistemas.com.br/v1/Cliente/001/001/";
+        public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";
 
     }
 }

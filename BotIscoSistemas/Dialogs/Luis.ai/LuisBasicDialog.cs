@@ -1,4 +1,6 @@
 ﻿
+using Bot4App.Dialogs.Dialog;
+using Bot4App.Forms;
 using Bot4App.Models;
 using Bot4App.QnA;
 using Bot4App.Services;
@@ -8,9 +10,13 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
  
@@ -34,56 +40,38 @@ namespace Bot4App.Dialogs.Luis.ai
 
 
 
-        [LuisIntent("None")]
-        [LuisIntent("")]
-        public async Task None(IDialogContext context, LuisResult result)
-        {
-            await context.PostAsync($"{_MsgNotUndertand}\n{_DefaultMsgHelp}");
-
-            //var days = (IEnumerable<Days>)Enum.GetValues(typeof(Days));
-            //PromptDialog.Choice(context, StoreHoursResult, days, "Which day of the week?",
-            //    descriptions: from day in days
-            //                  select (day == Days.Saturday || day == Days.Sunday) ? day.ToString() + "(no holidays)" : day.ToString());
-
-            //context.Done<string>(null);
-        }
-
        
 
 
-        [LuisIntent("start-wars")]
-        public async Task StartWars(IDialogContext context, LuisResult result)
-        {
-            var activity = (context.Activity as Activity);
-            var message = activity.CreateReply();
-            message.Attachments.Add(GetAudioCard());
-
-            await context.PostAsync(message);
-            // context.Wait(StartWars);
-
-        }
-
+        [LuisIntent("")]
+        [LuisIntent("None")]
         [LuisIntent("sense-bot")]
+        public async Task Sense(IDialogContext context, LuisResult result)
+        {
+            var userQuestion = (context.Activity as Activity).Text;
+            await context.Forward(new QnaIscoSistemas(), ResumeAfterQnA, context.Activity, CancellationToken.None);
+            //public async Task None(IDialogContext context, LuisResult result) => await context.PostAsync($"{_MsgNotUndertand}\n{_DefaultMsgHelp}");
+        }
+
+        
+
         [LuisIntent("greeting-bot")]
-        public async Task Conciencia(IDialogContext context, LuisResult result)
+        public async Task Greeting(IDialogContext context, LuisResult result)
         {
-            var userQuestion = (context.Activity as Activity).Text;
-            await context.Forward(new QnaSenseBot(), ResumeAfterQnA, context.Activity, CancellationToken.None);
+            var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time")).TimeOfDay;
+            string saudacao;
+
+
+            if (now < TimeSpan.FromHours(12)) saudacao = "Bom dia";
+            else if (now < TimeSpan.FromHours(18)) saudacao = "Boa tarde";
+            else saudacao = "Boa noite";
+
+
+            await context.PostAsync($"{saudacao}!  Em que posso ajudar ?");
+            context.Done<string>(null);
         }
 
-        [LuisIntent("blog-bot")]
-        public async Task BotBlogSearch(IDialogContext context, LuisResult result)
-        {
-            var userQuestion = (context.Activity as Activity).Text;
-            await context.Forward(new QnaBlogSite(), ResumeAfterQnA, context.Activity, CancellationToken.None);
-        }
-
-        [LuisIntent("about-me")]
-        public async Task Aboutme(IDialogContext context, LuisResult result)
-        {
-            var userQuestion = (context.Activity as Activity).Text;
-            await context.Forward(new QnaAboutMe(), ResumeAfterQnA, context.Activity, CancellationToken.None);
-        }
+         
 
         [LuisIntent("laugh-bot")]
         public async Task Laugh(IDialogContext context, LuisResult result) => await context.PostAsync($"{ FakeList.GetRandomLaugh()}  { FakeList.GetListRandomEmojiHappy(3) }");
@@ -95,13 +83,16 @@ namespace Bot4App.Dialogs.Luis.ai
         [LuisIntent("joke-bot")]
         public async Task Joke(IDialogContext context, LuisResult result) => await context.PostAsync($"{ FakeList.GetRandomJoke()} { FakeList.GetListRandomEmojiHappy(6) } ");
 
+
+
         [LuisIntent("help-bot")]
         public async Task Help(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync(_DefaultMsgHelp);
-            context.Done<string>(null);
+            await context.Forward(new RegisterSuportDialog(), ResumeAfterQnA, context.Activity, CancellationToken.None);
         }
-            
+
+
+         
 
         [LuisIntent("request-quote")]
         public async Task ForwardRequestQuote(IDialogContext context, LuisResult result) => await context.Forward(new RequestQuoteDialog(), ResumeAfterQnA, context.Activity, CancellationToken.None);
@@ -141,7 +132,7 @@ namespace Bot4App.Dialogs.Luis.ai
             var message = await value;
             var text = message.Text;
 
-            await context.Forward(new QnaBlogSite(), ResumeAfterQnA, context.Activity, CancellationToken.None);
+            await context.Forward(new QnaIscoSistemas(), ResumeAfterQnA, context.Activity, CancellationToken.None);
 
         }
 

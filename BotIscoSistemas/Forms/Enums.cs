@@ -62,6 +62,27 @@ namespace BotBlog.Forms
     }
 
 
+    public enum TipoProblema
+    {
+        [Describe("Outro")]
+        [Terms("1", "Outro", "O", "outro")]
+        Outro = 1,
+        [Describe("Nota Fiscal")]
+        [Terms("2", "Nota Fiscal", "NF")]
+        NF,
+        [Describe("Cadastro")]
+        [Terms("3", "Cadastro", "Cadastro", "Cliente", "produtos")]
+        Cadastro,
+        [Describe("Financeiro")]
+        [Terms("4", "Financeiro", "Boleto")]
+        Financeiro,
+        [Describe("Acesso ao Sistema")]
+        [Terms("5", "Acesso ao Sistema", "Acesso", "senha","Atualizar sistema")]
+        Acesso
+
+    }
+
+
 
 
     public enum TipoDesenvolvimento
