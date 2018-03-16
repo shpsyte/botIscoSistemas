@@ -82,6 +82,30 @@ namespace BotBlog.Forms
 
     }
 
+    public enum OpcaoVendas
+    {
+
+        [Describe("Mensal")]
+        [Terms("Mensal")]
+        Mensal = 1,
+        [Describe("Anual Save 10%")]
+        [Terms("Anual Save 10%")]
+        Anual,
+        [Describe("Trimestral Save 5%")]
+        [Terms("Trimestral Save 5%")]
+        Trimentral
+
+    }
+
+    public enum RegimeTributacao
+    {
+        Mei = 1,
+        Simples,
+        LucroPresumido,
+        LucroReal,
+        Outros
+    }
+
 
 
 

@@ -42,7 +42,7 @@ namespace Bot4App
                         {
                             //await this.SendConversation(activity);
                             var reply = activity.CreateReply();
-                            reply.Text = $"**( ͡° ͜ʖ ͡°)**  {_msg} " ;
+                            reply.Text = $"{_msg} " ;
                             await connector.Conversations.ReplyToActivityAsync(reply);
 
 

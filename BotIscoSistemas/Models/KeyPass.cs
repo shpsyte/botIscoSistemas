@@ -10,8 +10,8 @@ namespace BotBlog.Models
 
         //msg
         internal static string _MsgNotUndertand = $"Hum... Estou aprendendo isso ainda, vou falar com o **pessoal da Isco** para me explicar isso, ok ? ";
-        internal static string _MsgHelp = $"Eu sou o **Agente Virtual da Isco.** Eu ainda estou em treinamento e eu adoraria ajudá-lo. \n" +
-            " Você também pode pedir para conversar com uma pessoa a qualquer momento. Por favor, **descreva brevemente o problema** abaixo." ;
+        internal static string _MsgHelp = $"Sou o **Agente Virtual da Isco.** Eu ainda estou em treinamento e eu adoraria ajudá-lo. \n" +
+            " Você também pode pedir para conversar com uma pessoa a qualquer momento. Por favor, **descreva brevemente o que precisa** abaixo." ;
 
         
 
@@ -33,7 +33,29 @@ namespace BotBlog.Models
 
         ///api isco
         public readonly static string endpointCustomer = $"http://www.api.iscosistemas.com.br/v1/Cliente/001/001/";
-        public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";
 
+        ///Email Setup Config
+        public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";//"support@iscosistemas.zohosupport.com";
+        public readonly static string _emailVendas = "fernanda.galvao@iscosistemas.com";
+        public readonly static string _host = "mail.iscosistemas.com.br";
+        public readonly static string _from = "jose.luiz@iscosistemas.com";
+        public readonly static string _userSmtp = "jose.luiz@iscosistemas.com";
+        public readonly static string _passSmtp = "Jymkatana_6985";
+        public readonly static int _portSmtp = 587;
+        public readonly static int _timeOut = 10000;
+        
+
+
+        //jose.luiz@iscosistemas.com
+
+
+        //documentodb
+        public readonly static string _cosmoDburi = "https://botiscosistemas.documents.azure.com:443/";
+        public readonly static string _cosmokey = "CMzzDGk4BaamsigNeUmhgXPX5wdp7P0ESUVwVYw7tiw6jVjir4xMurdaIFhQbDIYDYQ9XC0mX4maoiJFiXAnww==";
+
+
+        //twilo
+        public readonly static string _twiloId = "ACac0aa58b65b7d8dc6976c4cb4c9b3534";
+        public readonly static string _twiloauthToken = "f1f39694c8b708c43250c4b836999d5f";
     }
 }

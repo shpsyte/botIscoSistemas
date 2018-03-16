@@ -24,9 +24,9 @@ namespace Bot4App.Forms
         [Pattern(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")]
         [Template(TemplateUsage.NotUnderstood, "Este email não me parece certo, pode confirmar ?  \"{0}\".")]
         public string Email;
-        [Prompt("Qual o seu Telefone ?")]
-        //[Pattern(@"(\(\d{2}\))?\s*\d{3}(-|\s*)\d{4}")]
-        public string Fone;
+        //[Prompt("Qual o seu Telefone ?")]
+        ////[Pattern(@"(\(\d{2}\))?\s*\d{3}(-|\s*)\d{4}")]
+        //public string Fone;
         [Describe("Área")]
         [Template(TemplateUsage.EnumSelectOne, "Qual {&} do sistema está com problema ? {||}", ChoiceStyle = ChoiceStyleOptions.Buttons)]
         public TipoProblema TipoProblema;
@@ -77,6 +77,7 @@ namespace Bot4App.Forms
             return builder
                  // .Field(nameof(PizzaOrder.Choice))
                 .Field(nameof(RegisterSuport.TipoProblema))
+
                 .Field(new FieldReflector<RegisterSuport>(nameof(AccessOption))
                         .SetType(null)
                         .SetActive((state) => state.TipoProblema == TipoProblema.Acesso)
@@ -90,15 +91,15 @@ namespace Bot4App.Forms
                             return true;
                         }))
                 .Field(nameof(RegisterSuport.UserName), isAccuserBo)
-                .Field(nameof(RegisterSuport.Empresa))
-                .Field(nameof(RegisterSuport.Name))
-                .Field(nameof(RegisterSuport.Email))
-                .Field(nameof(RegisterSuport.Fone))
                 .Field(nameof(RegisterSuport.NumeroDaNota), isNF)
                 .Confirm("Você digitou o número {NumeroDaNota} está correta ? ", isNF)
                 .Field(nameof(RegisterSuport.Cliente), isCadastro)
                 .Field(nameof(RegisterSuport.Titulo), isFinanceiro)
                 .Field(nameof(RegisterSuport.Teamview), isTV)
+                .Field(nameof(RegisterSuport.Empresa))
+                .Field(nameof(RegisterSuport.Name))
+                .Field(nameof(RegisterSuport.Email))
+               // .Field(nameof(RegisterSuport.Fone))
                // .Confirm("O Teaview v12 {Teamview}, está correto ? ", isTV)
                 //.Field(nameof(RegisterSuport.ContactTime), "Qual o horário que podemos conectar pelo Teamview ? {&}", isTV)
                 .AddRemainingFields()
@@ -111,42 +112,24 @@ namespace Bot4App.Forms
 
         public override string ToString()
         {
-            var builder = new StringBuilder();
-            builder.AppendFormat("Suporte da Empresa: {0}, \n ", Empresa);
-            builder.AppendFormat("Nome: {0}, \n ", Name);
-            builder.AppendFormat("Email:  {0}, \n ", Email);
-            builder.AppendFormat("Fone:  {0}, \n ", Fone);
-            builder.AppendFormat("TipoProblema:  {0}, \n ", TipoProblema);
-
-            if (!string.IsNullOrEmpty(AccessOption))
-                builder.AppendFormat(" Tipo do Erro acesso:  {0}, \n ", AccessOption);
-
-            if (!string.IsNullOrEmpty(UserName))
-                builder.AppendFormat(" Usuário:  {0}, \n ", UserName);
+            string body = $"<h3> Suporte Técnico </h3> <p> <b>Empresa.:</b>  { Empresa } </p> " +
+                $"  <p> <b>Empresa.:</b>  { Empresa } </p>  " +
+                $"  <p> <b>Nome.:</b>  { Name } </p>  " +
+                $"  <p> <b>Email.:</b>  { Email } </p>  " +
+                $"  <p> <b>Assunto Inicial.:</b>  { Assunto } </p>  " +
+                $"  <p> <b>TipoProblema.:</b>  { TipoProblema } </p>  ";
 
 
-            builder.AppendFormat("Assunto: {0}, \n ", Assunto);
-            if (!string.IsNullOrEmpty(NumeroDaNota))
-               builder.AppendFormat("Nota: {0}, \n ", NumeroDaNota);
-
-            if (!string.IsNullOrEmpty(Cliente))
-                builder.AppendFormat(" Cliente:  {0}, \n ", Cliente);
-
-            if (!string.IsNullOrEmpty(Titulo))
-                builder.AppendFormat(" Titulo  {0}, \n ", Titulo);
-
-            if (!string.IsNullOrEmpty(Teamview))
-                builder.AppendFormat(" Teamview:  {0}, \n ", Teamview);
+            if (!string.IsNullOrEmpty(AccessOption)) body += $"  <p> <b>Tipo Acesso.:</b>  { AccessOption } </p>  ";
+            if (!string.IsNullOrEmpty(UserName)) body += $"  <p> <b>User Name.:</b>  { UserName } </p>  ";
+            if (!string.IsNullOrEmpty(NumeroDaNota)) body += $"  <p> <b>Nota.:</b>  { NumeroDaNota } </p>  ";
+            if (!string.IsNullOrEmpty(Cliente)) body += $"  <p> <b>Cliente.:</b>  { Cliente } </p>  ";
+            if (!string.IsNullOrEmpty(Titulo)) body += $"  <p> <b>Titulo.:</b>  { Titulo } </p>  ";
+            if (!string.IsNullOrEmpty(Teamview)) body += $"  <p> <b>Teamview.:</b>  { Teamview } </p>  ";
+            if (!string.IsNullOrEmpty(Describe)) body += $"  <p> <b>Describe.:</b>  { Describe } </p>  ";
 
 
-            if (!string.IsNullOrEmpty(Describe))
-                builder.AppendFormat(" Describe: {0}, \n ", Describe);
-
-          
-
-
-
-            return builder.ToString();
+            return body;
         }
 
     }

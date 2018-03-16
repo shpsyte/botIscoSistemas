@@ -72,17 +72,17 @@ namespace Bot4App.Models
 
             List<string> list = new List<string>();
 
-            list.Add("😜😜 Kkkkkkk 😀");
-            list.Add("hhihihihih. 🕺🕺🕺");
-            list.Add("lol 😃😃😃😃");
+            list.Add("😜😜😀");
+            list.Add("🕺🕺🕺");
+            list.Add("😃😃😃😃");
             list.Add(":) 😅");
-            list.Add("uuuuuuahuahu :smiley: :smiley: 😎😎");
-            list.Add("(▀̿Ĺ̯▀̿ ̿)");
-            list.Add("kkkkkk 😜😜😜😜");
-            list.Add("ahuauhahuha 😄");
-            list.Add("rs lol... 😄😄");
-            list.Add("(▀̿Ĺ̯▀̿ ̿) (▀̿Ĺ̯▀̿ ̿) (▀̿Ĺ̯▀̿ ̿)");
-            list.Add(";)");
+            list.Add("😎😎");
+            list.Add("(▀̿Ĺ̯▀̿ ̿)😍😍");
+            list.Add("😜😎😜😜");
+            list.Add("😄");
+            list.Add("😜😜😜");
+            list.Add("😍 (▀̿Ĺ̯▀̿ ̿) ");
+            list.Add("😍😎😜😍");
             list.Add("😀😀😀");
 
 

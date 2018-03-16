@@ -11,6 +11,9 @@ using Bot4App.Forms;
 using BotBlog.Models;
 using BotBlog.Forms;
 using System.Linq;
+using Bot4App.Services;
+using System.Globalization;
+using System.Threading;
 
 namespace Bot4App.Dialogs.Dialog
 {
@@ -21,12 +24,13 @@ namespace Bot4App.Dialogs.Dialog
         //private readonly static string _LuiSubscriptionKey = KeyPassAndPhrase._LuiSubscriptionKey;
         //private readonly static string _MsgNotUndertand = KeyPassAndPhrase._MsgNotUndertand;
         //private readonly static string _DefaultMsgHelp = KeyPassAndPhrase._MsgHelp;
-
+        
 
         public Task StartAsync(IDialogContext context)
         {
             context.Wait(SendConversation);
             return Task.CompletedTask;
+
         }
 
 
@@ -76,7 +80,14 @@ namespace Bot4App.Dialogs.Dialog
             }
 
             capLeadForm.Assunto = activity.Text;
+            // force Culture
 
+            CultureInfo lang = new CultureInfo("pt-BR");
+            
+            Thread.CurrentThread.CurrentCulture = lang;
+            Thread.CurrentThread.CurrentUICulture = lang;
+            context.Activity.AsMessageActivity().Locale = lang.ToString();
+            
 
             var form = new FormDialog<RegisterSuport>(capLeadForm, RegisterSuport.BuildForm, FormOptions.PromptInStart, null);
             context.Call<RegisterSuport>(form, FormCompleteCallback);
@@ -101,18 +112,16 @@ namespace Bot4App.Dialogs.Dialog
 
             if (order != null)
             {
-                await context.PostAsync("Ok, está feito, o **suporte** já recebeu este chamado \n," +
-                    " agora é só aguardar o atendimento.");
 
-                await Services.Email.SendEmail("Suporte Técnico ", order.ToString(), order.Email, KeyPassAndPhrase._emailSuporte, new string[] { "jose.luiz@iscosistemas.com" });
-
+                await context.PostAsync("Ok, me da alguns minutos já resolvo para você e lhe respondo no **e-mail**, ta bom ?...");
+                await Email.Send("Suporte Técnico", order.ToString(), order.Email, KeyPassAndPhrase._emailSuporte, new string[] { "suporte@iscosistemas.com.br", "suporte@iscosistemas.com", "support@iscosistemas.zohosupport.com" });
             }
             else
             {
                 await context.PostAsync("Hum.. algo deu errado, por favor tente **novamente**");
             }
 
-            // context.Done<string>(null);
+              context.Done<string>(null);
 
         }
 

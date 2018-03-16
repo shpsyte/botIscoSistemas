@@ -1,10 +1,12 @@
-﻿using BotBlog.Models;
+﻿using BotBlog.Dialogs.Qna;
+using BotBlog.Models;
 using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bot4App.QnA
@@ -18,9 +20,13 @@ namespace Bot4App.QnA
         private readonly static double _Score = KeyPassAndPhrase._Score;
         private readonly static int _QtyAnswerReturn = KeyPassAndPhrase._QtyAnswerReturn;
 
-        public QnaIscoSistemas() : base(new QnAMakerService(new QnAMakerAttribute(_QnaSubscriptionKey, _QnaKnowledgedId, _DefatulMsg, _Score, _QtyAnswerReturn)))
-        {
+        public bool askLead { get; set; }
+        
 
+
+        public QnaIscoSistemas(bool _askLead) : base(new QnAMakerService(new QnAMakerAttribute(_QnaSubscriptionKey, _QnaKnowledgedId, _DefatulMsg, _Score, _QtyAnswerReturn)))
+        {
+            this.askLead = _askLead;
         }
 
 
@@ -47,14 +53,18 @@ namespace Bot4App.QnA
         ////// Override to log matched Q&A before ending the dialog
         protected override async Task DefaultWaitNextMessageAsync(IDialogContext context, IMessageActivity message, QnAMakerResults results)
         {
-            
-
             var answer = results.Answers.First().Answer;
-           
             var userQuestion = (context.Activity as Activity).Text;
+          
 
-            context.Call(new BotBlog.Dialogs.Qna.FeedbackDialog("url", userQuestion), ResumeAfterFeedback);
-
+            if (askLead)
+            {
+                await Task.Delay(5000).ContinueWith(t =>
+                 {
+                    context.Call(new FeedbackAskLeadDialog(answer, userQuestion), ResumeAfterFeedback);
+                 });
+               
+            }
         }
 
 
@@ -70,7 +80,7 @@ namespace Bot4App.QnA
             }
         }
 
-
+       
         //// Qunado o ML está ativa este metodo pergunta: "Você quis dizer isso ?" para que o qna possa aprender.
         protected override async Task QnAFeedbackStepAsync(IDialogContext context, QnAMakerResults qnaMakerResults)
         {

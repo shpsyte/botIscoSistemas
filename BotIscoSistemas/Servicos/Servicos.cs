@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BotBlog.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -10,6 +11,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace Bot4App.Services
 {
@@ -73,53 +77,117 @@ namespace Bot4App.Services
     }
 
 
+
+    public class Sms
+    {
+
+        // send
+        public static Task Send(string subject, string body, string to)
+        {
+            
+            try
+            {
+                TwilioClient.Init(KeyPassAndPhrase._twiloId, KeyPassAndPhrase._twiloauthToken);
+                var too = new PhoneNumber(string.Concat("+55", to));
+                var message = MessageResource.Create(
+                    too,
+                    from: new PhoneNumber("12678332952"),
+                    body: $" { body }");
+            }
+            catch (Exception e)
+            {
+                Email.Send("Erro no twilo", e.InnerException.Message, "jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
+
+            }
+
+            return Task.CompletedTask;
+            
+        }
+
+
+    }
+
+
+    public class BestDestination
+    {
+
+
+        public static string GetBestEmailTo(string to)
+        {
+            string best = "jose.luiz@iscosistemas.com.br";
+            to = to.ToLower();
+            string[] fer = new string[] { "fernanda", "fer", "venda", "vendas", "fianceiro" };
+
+            foreach (var item in fer)
+                if (item.ToLower().Contains(to))
+                    best = "fernanda.galvao@iscosistemas.com.br";
+
+            return best;
+        }
+
+        public static string GetBestFoneTo(string to)
+        {
+            string best = "41999325815";
+            to = to.ToLower();
+            string[] fer = new string[] { "fernanda", "fer", "venda", "vendas", "fianceiro" };
+
+            foreach (var item in fer)
+                if (item.ToLower().Contains(to))
+                    best = "41996030814";
+
+            return best;
+        }
+
+
+    }
     public class Email
     {
 
 
-
-        public static Task SendEmail(string subject, string body, string from, string to, string[] cc = null)
+        private static SmtpClient SetupEmail(string account = null, string pass = null, string host = null)
         {
-          
-            if (string.IsNullOrEmpty(to))
-                to = "jose.luiz@iscosistemas.com";
-
-            MailMessage mail = new MailMessage("jose.luiz@iscosistemas.com", to, subject, body);
-            mail.ReplyToList.Add(new MailAddress(from));
-            mail.Priority = MailPriority.High;
-           // mail.Sender = new MailAddress(from);
-
-
-
-            if (cc.Length > 0)
-            {
-                foreach (var item in cc)
-                {
-                    mail.CC.Add(item);
-                }
-            }
-
             SmtpClient client = new SmtpClient();
             client.Port = 587;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.Credentials = new System.Net.NetworkCredential("jose.luiz@iscosistemas.com", "Jymkatana_6985");
-            client.UseDefaultCredentials = true;
-            client.Timeout = 1000;
-            client.Host = "mail.iscosistemas.com";
-
-
-            client.SendMailAsync(mail);
-            //client.Send(mail);
-
-            return null;
-
+            client.Credentials = new System.Net.NetworkCredential(string.IsNullOrEmpty(account) ? "jose.luiz@iscosistemas.com" : account, string.IsNullOrEmpty(pass) ? "Jymkatana_6985" : pass);
+            client.UseDefaultCredentials = false;
+            client.Timeout = 10000;
+            client.Host = string.IsNullOrEmpty(host) ? "mail.iscosistemas.com" : host;
+            return client;
         }
 
-        internal static Task SendEmail(string v1, string v2, string email, object emailSuporte, string[] v3)
+
+        // constants
+        private const string HtmlEmailHeader = "<html><head><title></title></head><body style='font-family:arial; font-size:14px;'>";
+        private const string HtmlEmailFooter = "</body></html>";
+
+
+
+
+
+        // send
+        public static async Task Send(string subject, string body, string replayto, string to, string[] cc = null, string[] bcc = null)
         {
-            throw new NotImplementedException();
+            MailMessage message = new MailMessage(KeyPassAndPhrase._from, to);
+            message.Subject = subject;
+            message.Body = string.Concat(HtmlEmailHeader, body, HtmlEmailFooter);
+            message.BodyEncoding = Encoding.UTF8;
+            message.SubjectEncoding = Encoding.UTF8;
+            message.IsBodyHtml = true;
+            message.Priority = MailPriority.High;
+            message.ReplyToList.Add(new MailAddress(replayto));
+            if (cc != null && cc.Length > 0) foreach (var x in cc) message.CC.Add(x);
+            if (bcc != null && bcc.Length > 0) foreach (var x in bcc) message.Bcc.Add(x);
+            SmtpClient client = new SmtpClient(KeyPassAndPhrase._host, KeyPassAndPhrase._portSmtp);
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new System.Net.NetworkCredential(KeyPassAndPhrase._userSmtp, KeyPassAndPhrase._passSmtp);
+            client.UseDefaultCredentials = false;
+            client.Timeout = KeyPassAndPhrase._timeOut;
+            await client.SendMailAsync(message);
         }
     }
+
+
 
 
     public class ValidaDocumento
