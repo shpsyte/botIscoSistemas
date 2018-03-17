@@ -16,7 +16,7 @@ namespace BotBlog.Dialogs.Qna
     {
         private string qnaURL;
         private string userQuestion;
-
+        
         public FeedbackAskLeadDialog(string url, string question)
         {
             // keep track of data associated with feedback

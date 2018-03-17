@@ -1,4 +1,6 @@
 ﻿using BotBlog.Models;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -76,37 +78,7 @@ namespace Bot4App.Services
         }
     }
 
-
-
-    public class Sms
-    {
-
-        // send
-        public static Task Send(string subject, string body, string to)
-        {
-            
-            try
-            {
-                TwilioClient.Init(KeyPassAndPhrase._twiloId, KeyPassAndPhrase._twiloauthToken);
-                var too = new PhoneNumber(string.Concat("+55", to));
-                var message = MessageResource.Create(
-                    too,
-                    from: new PhoneNumber("12678332952"),
-                    body: $" { body }");
-            }
-            catch (Exception e)
-            {
-                Email.Send("Erro no twilo", e.InnerException.Message, "jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
-
-            }
-
-            return Task.CompletedTask;
-            
-        }
-
-
-    }
-
+     
 
     public class BestDestination
     {
@@ -140,7 +112,9 @@ namespace Bot4App.Services
 
 
     }
-    public class Email
+
+    [Serializable]
+    public class SendMsg
     {
 
 
@@ -164,27 +138,86 @@ namespace Bot4App.Services
 
 
 
+         
+        // send
+        public Task SendEmailAsync(string subject, string body, string replayto, string to, string templateId = null, string[] cc = null, string[] bcc = null)
+        {
+            return ExecuteEmailAsync(subject, body, replayto, to, templateId, cc, bcc);
+          
+        }
+
+        public Task ExecuteEmailAsync(string subject, string body, string replayto, string to, string templateId, string[] cc = null, string[] bcc = null)
+        {
+            var client = new SendGridClient("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");
+            var msg = new SendGridMessage()
+            {
+                From = new EmailAddress(KeyPassAndPhrase._from),
+                Subject = subject,
+               // PlainTextContent = body,
+                HtmlContent = string.Concat(HtmlEmailHeader, body, HtmlEmailFooter),
+                ReplyTo = new EmailAddress(replayto),
+                
+            };
+            msg.AddTo(new EmailAddress(to));
+            if (!string.IsNullOrEmpty(templateId))
+                msg.TemplateId = templateId;
+
+            return client.SendEmailAsync(msg);
+
+            
+
+            //MailMessage message = new MailMessage(KeyPassAndPhrase._from, to);
+            //message.Subject = subject;
+            //message.Body = string.Concat(HtmlEmailHeader, body, HtmlEmailFooter);
+            //message.BodyEncoding = Encoding.UTF8;
+            //message.SubjectEncoding = Encoding.UTF8;
+            //message.IsBodyHtml = true;
+            //message.Priority = MailPriority.High;
+            //message.ReplyToList.Add(new MailAddress(replayto));
+            //if (cc != null && cc.Length > 0) foreach (var x in cc) message.CC.Add(x);
+            //if (bcc != null && bcc.Length > 0) foreach (var x in bcc) message.Bcc.Add(x);
+            //SmtpClient client = new SmtpClient(KeyPassAndPhrase._host, KeyPassAndPhrase._portSmtp);
+            //client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            //client.Credentials = new System.Net.NetworkCredential(KeyPassAndPhrase._userSmtp, KeyPassAndPhrase._passSmtp);
+            //client.UseDefaultCredentials = false;
+            //client.Timeout = KeyPassAndPhrase._timeOut;
+            //return client.SendMailAsync(message);
+        }
+
+
+
 
         // send
-        public static async Task Send(string subject, string body, string replayto, string to, string[] cc = null, string[] bcc = null)
+        public Task SendSmsAsync(string body, string to)
         {
-            MailMessage message = new MailMessage(KeyPassAndPhrase._from, to);
-            message.Subject = subject;
-            message.Body = string.Concat(HtmlEmailHeader, body, HtmlEmailFooter);
-            message.BodyEncoding = Encoding.UTF8;
-            message.SubjectEncoding = Encoding.UTF8;
-            message.IsBodyHtml = true;
-            message.Priority = MailPriority.High;
-            message.ReplyToList.Add(new MailAddress(replayto));
-            if (cc != null && cc.Length > 0) foreach (var x in cc) message.CC.Add(x);
-            if (bcc != null && bcc.Length > 0) foreach (var x in bcc) message.Bcc.Add(x);
-            SmtpClient client = new SmtpClient(KeyPassAndPhrase._host, KeyPassAndPhrase._portSmtp);
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.Credentials = new System.Net.NetworkCredential(KeyPassAndPhrase._userSmtp, KeyPassAndPhrase._passSmtp);
-            client.UseDefaultCredentials = false;
-            client.Timeout = KeyPassAndPhrase._timeOut;
-            await client.SendMailAsync(message);
+            return ExecuteSmsAsync(body, to);
+
+
         }
+
+
+        public Task ExecuteSmsAsync(string body, string to)
+        {
+            try
+            {
+                TwilioClient.Init(KeyPassAndPhrase._twiloId, KeyPassAndPhrase._twiloauthToken);
+                var too = new PhoneNumber(string.Concat("+55", to));
+                var message = MessageResource.Create(
+                    too,
+                    from: new PhoneNumber("12678332952"),
+                    body: $" { body }");
+            }
+            catch (Exception e)
+            {
+                SendMsg _email = new SendMsg();
+                _email.SendEmailAsync("Erro no twilo", e.InnerException.Message, "jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
+
+
+            }
+
+            return Task.CompletedTask;
+        }
+
     }
 
 

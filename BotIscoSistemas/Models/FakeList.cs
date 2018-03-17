@@ -114,15 +114,13 @@ namespace Bot4App.Models
             list.Add("😜");
             list.Add("🤪");
             list.Add("🙂");
-            list.Add("☺");
             list.Add("😏");
             list.Add("😃");
             list.Add("😛");
-            list.Add("😀😀");
-            list.Add("🤣🤣");
-            list.Add("🙃🤣😀");
-            list.Add("😅");
-            list.Add("😀😀");
+            list.Add("🙃😀");
+            list.Add("😍");
+            list.Add("😀😍");
+            list.Add("😍");
 
 
             return list;

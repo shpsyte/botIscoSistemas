@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bot4App.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,10 +11,20 @@ namespace BotBlog.Models
 
         //msg
         internal static string _MsgNotUndertand = $"Hum... Estou aprendendo isso ainda, vou falar com o **pessoal da Isco** para me explicar isso, ok ? ";
-        internal static string _MsgHelp = $"Sou o **Agente Virtual da Isco.** Eu ainda estou em treinamento e eu adoraria ajudá-lo. \n" +
-            " Você também pode pedir para conversar com uma pessoa a qualquer momento. Por favor, **descreva brevemente o que precisa** abaixo." ;
+        internal static string _MsgHelp = $"Oi, tudo bem ? eu sou a ***Ian*** 😎, sou uma *Agente Virtual.* \n" +
+            $" Ainda estou em treinamento, mas adoraria ajudá-lo 😍😍. Por favor, **descreva brevemente** do que você precisa..." ;
+        internal static string _GetContactInfo = $"Quer me deixar seu **Nome** e **Email**, para alguém (mais esperto que eu, 🙂) lhe enviar *mais informações* ?";
 
         
+
+      
+        internal static string _IamHereForHelp = "Ok, sem problemas, mas estou aqui para te ajudar.. 😃 ";
+        internal static string _OkImSorryButIamHere = "Puxa vida, que pena, 😐 se precisar estou por aqui... 😃 ";
+        internal static string _NewLeadComming = "Possível Lead entrando! 😍😍";
+        internal static string _SometinhgWrong  = "Hum..algo deu errado, 😐 por favor tente** novamente**";
+        internal static string _ItsDoneContact = "Ok, enviado, já já aguém entra em contato..";
+
+
 
         //luis
         internal static string _LuisModelId = "c0eabe53-c8cc-4a05-bdde-052b434b95b3";
@@ -36,7 +47,9 @@ namespace BotBlog.Models
 
         ///Email Setup Config
         public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";//"support@iscosistemas.zohosupport.com";
-        public readonly static string _emailVendas = "fernanda.galvao@iscosistemas.com";
+        public readonly static string _emailVendas = "jose.iscosistemas@gmail.com";
+        internal static string _emailCopiaVendas = "";//"jose.iscosistemas@zoho.com";
+
         public readonly static string _host = "mail.iscosistemas.com.br";
         public readonly static string _from = "jose.luiz@iscosistemas.com";
         public readonly static string _userSmtp = "jose.luiz@iscosistemas.com";

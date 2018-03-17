@@ -4,6 +4,7 @@ using Bot4App.Forms;
 using Bot4App.Models;
 using Bot4App.QnA;
 using Bot4App.Services;
+using BotBlog.Dialogs.Dialog;
 using BotBlog.Models;
 using Microsoft.Bot.Builder.Dialogs;
  
@@ -27,15 +28,16 @@ namespace Bot4App.Dialogs.Luis.ai
     public class LuisBasicDialog : LuisDialog<object>
     {
 
+        public static string _agent;
+        public static string _person;
+        public static string _fone;
         private readonly static string _LuisModelId = KeyPassAndPhrase._LuisModelId;
         private readonly static string _LuiSubscriptionKey = KeyPassAndPhrase._LuiSubscriptionKey;
         private readonly static string _MsgNotUndertand = KeyPassAndPhrase._MsgNotUndertand;
         private readonly static string _DefaultMsgHelp = KeyPassAndPhrase._MsgHelp;
+        private static string body = $"Olá { _agent }, Favor entrar em contato <b>Urgente</b> com { _person } no Fone { _fone } ";
+        SendMsg _sendMsg = new SendMsg();
 
-
-        public string _agent;
-        public string _person;
-        public string _fone;
 
         public LuisBasicDialog() : base(new LuisService(new LuisModelAttribute(_LuisModelId, _LuiSubscriptionKey, LuisApiVersion.V2)))
         {
@@ -51,16 +53,14 @@ namespace Bot4App.Dialogs.Luis.ai
         [LuisIntent("None")]
         public async Task NotUnderstod(IDialogContext context, LuisResult result)
         {
-            var act = (context.Activity as Activity);
-            string pergunta = act.Text;
-            await context.PostAsync($"{_MsgNotUndertand}\n{_DefaultMsgHelp}");
-            await Email.Send("Oi, pode me treinar com isso ?", pergunta, "jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
-
+            _sendMsg.SendEmailAsync("Oi, alguém fez esta pergunta e não soube responder...", $" <b> { (context.Activity as Activity).Text } </b>","jose.iscosistemas@gmail.com", "jose.iscosistemas@gmail.com", null);
+            await context.PostAsync($"{_MsgNotUndertand}");
+            await context.Forward(new GetContactInfoDialog(), ResumeAfterQnA, context.Activity, CancellationToken.None);
         }
 
-       
 
-        [LuisIntent("urgent-bot")]
+
+        [LuisIntent("contact-bot")]
         public async Task ContactUrgent(IDialogContext context, LuisResult result)
         {
             var entities = new List<EntityRecommendation>(result.Entities);
@@ -78,22 +78,14 @@ namespace Bot4App.Dialogs.Luis.ai
 
                 string to = BestDestination.GetBestEmailTo(_agent);
                 string foneto = BestDestination.GetBestFoneTo(_agent);
+                await context.PostAsync($"Ok, já pedi para { _agent } entrarem em contato no fone { _fone }, obrigado ");
 
-                await Email.Send("Entrar em contato ", $"Fone { _fone } ", to, to);
-                await context.PostAsync($"Ok, já pedi para { _agent } entrarem em contato no fone { _fone } ");
-                await Sms.Send("Contato Urgete", $"Oi {_agent}, Favor Entrar em contato: {_person} no fone { _fone }", foneto);
+                _sendMsg.SendEmailAsync("Solicitação de Contato",  body, to, to);
+                _sendMsg.SendSmsAsync($"Oi {_agent}, Favor Entrar em contato: {_person} no fone { _fone }", foneto);
+
             }
 
         }
-
-        [LuisIntent("question-nota-bot")]
-        public async Task QuestionNota(IDialogContext context, LuisResult result)
-        {
-            
-            var userQuestion = (context.Activity as Activity).Text;
-            await context.Forward(new QnaIscoSistemas(true), ResumeAfterQnA, context.Activity, CancellationToken.None);
-        }
-
 
 
         private async Task GetFone(IDialogContext context, IAwaitable<IMessageActivity> value)
@@ -101,14 +93,25 @@ namespace Bot4App.Dialogs.Luis.ai
             var fone = await value;
             string to = BestDestination.GetBestEmailTo(_agent);
             string foneto = BestDestination.GetBestFoneTo(_agent);
+            _fone = fone.Text;
 
-
-            await Email.Send("Entrar em contato ", $"Fone { fone } ", to, to);
-            await context.PostAsync($"Ok, já pedi para { _agent } entrarem em contato com { _person } no fone { _fone } ");
-            await Sms.Send("Contato Urgete", $"Oi {_agent}, Favor Entrar em contato: {_person} no fone { _fone }", foneto);
+            _sendMsg.SendEmailAsync("Solicitação de Contato", body, to, to);
+            _sendMsg.SendSmsAsync($"Oi {_agent}, Favor Entrar em contato: {_person} no fone { _fone }", foneto);
+            await context.PostAsync($"Ok, já pedi para { _agent } entrarem em contato no fone { _fone }, obrigado ");
 
             context.Wait(MessageReceived);
         }
+
+
+        [LuisIntent("feature-bot")]
+        public async Task Feature(IDialogContext context, LuisResult result)
+        {
+            (context.ConversationData).SetValue("interesse", 1);
+            await context.Forward(new QnaIscoSistemas(true), null, context.Activity, CancellationToken.None);
+        }
+        
+
+
 
         [LuisIntent("sense-bot")]
         public async Task Sense(IDialogContext context, LuisResult result)
@@ -202,6 +205,7 @@ namespace Bot4App.Dialogs.Luis.ai
 
         private async Task ResumeAfterQnA(IDialogContext context, IAwaitable<object> result)
         {
+           // await context.PostAsync("Vamos lá..");
             //var activity = (context as Activity);
             //ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
 

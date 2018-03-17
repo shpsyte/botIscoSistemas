@@ -93,7 +93,8 @@ namespace Bot4App.Dialogs.Dialog
                 await context.PostAsync($"Obrigado pela confiança...{ order.Nome }");
                 await context.PostAsync($" Love to help! 😍😍 ");
 
-                await Email.Send("Nova Venda CREATELEAD", order.ToString(), order.Email, KeyPassAndPhrase._emailVendas, new string[] { "suporte@iscosistemas.com.br", "jose.luiz@iscosistemas.com", "jose.iscosistemas@zoho.com" });
+                ///await Email.SendEmailAsync("Nova Venda CREATELEAD", order.ToString(), order.Email, KeyPassAndPhrase._emailVendas, new string[] { "suporte@iscosistemas.com.br", "jose.luiz@iscosistemas.com", "jose.iscosistemas@zoho.com" });
+                ///todo arrumar email
             }
             else
             {

@@ -29,6 +29,7 @@ namespace Bot4App
             if (activity.Type == ActivityTypes.Message)
             {
                 await SendBotIsTyping(activity);
+                activity.Locale = "pt-BR";
 
                 await Conversation.SendAsync(activity, () => new LuisBasicDialog());
             }

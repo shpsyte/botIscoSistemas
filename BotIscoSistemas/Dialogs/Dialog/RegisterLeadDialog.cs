@@ -70,21 +70,10 @@ namespace Bot4App.Dialogs.Dialog
             if (order != null)
             {
 
-                Email.Send("Novo Lead CREATELEAD", order.ToString(), order.Email, KeyPassAndPhrase._emailVendas, new string[] { "suporte@iscosistemas.com.br", "jose.luiz@iscosistemas.com", "jose.iscosistemas@zoho.com" });
+                //Email.SendEmailAsync("Novo Lead CREATELEAD", order.ToString(), order.Email, KeyPassAndPhrase._emailVendas, new string[] { "suporte@iscosistemas.com.br", "jose.luiz@iscosistemas.com", "jose.iscosistemas@zoho.com" });
+                ///todo arrumar email
 
-
-                var feedback = ((Activity)context.Activity).CreateReply("Quer aproveitar e fechar comigo com **5%** de desconto ?, ainda dá tempo .... ");
-
-                feedback.SuggestedActions = new SuggestedActions()
-                {
-                    Actions = new List<CardAction>()
-                        {
-                            new CardAction(){ Title = "👍", Type=ActionTypes.PostBack, Value=$"yes-positive-feedback" },
-                            new CardAction(){ Title = "👎", Type=ActionTypes.PostBack, Value=$"no-negative-feedback" }
-                        }
-                };
-                await context.PostAsync(feedback);
-                context.Wait(this.MessageReceivedAsync);
+                 
 
             }
             else
@@ -95,41 +84,8 @@ namespace Bot4App.Dialogs.Dialog
             //context.Call(new FeedbackAskBuy("name", "email"), ResumeAfterQnA);
 
         }
-
-        public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
-        {
-            var userFeedback = await result;
-
-            if (userFeedback.Text.Contains("yes-positive-feedback") || userFeedback.Text.Contains("no-negative-feedback"))
-            {
-
-                if (userFeedback.Text.Contains("yes-positive-feedback"))
-                {
-                    await context.Forward(new RegisterBuyDialog(5), ResumeAfterQnA, context.Activity, CancellationToken.None);
-                }
-                else if (userFeedback.Text.Contains("no-negative-feedback"))
-                {
-                    await context.PostAsync("Ok, já enviei seus contato e já irei lhe enviar mais detalhes no seu **email** , ta bom ?...");
-                    await context.PostAsync($" Love to help! 😍😍 ");
-                   context.Done<string>(null);
-
-                }
-
-            }
-            else
-            {
-                // no feedback, return to QnA dialog
-                context.Done<IMessageActivity>(userFeedback);
-            }
-        }
-
-
-
-       
-        private async Task ResumeAfterQnA(IDialogContext context, IAwaitable<object> result)
-        {
-
-        }
+ 
+         
 
 
     }

@@ -107,6 +107,7 @@ namespace Bot4App.Dialogs.Dialog
             catch (OperationCanceledException)
             {
                 await context.PostAsync("Você cancelou, espero que conseguiu sua ajuda, mas se precisar estou aqui, ;) ");
+                context.Done<string>(null);
                 return;
             }
 
@@ -114,7 +115,8 @@ namespace Bot4App.Dialogs.Dialog
             {
 
                 await context.PostAsync("Ok, me da alguns minutos já resolvo para você e lhe respondo no **e-mail**, ta bom ?...");
-                await Email.Send("Suporte Técnico", order.ToString(), order.Email, KeyPassAndPhrase._emailSuporte, new string[] { "suporte@iscosistemas.com.br", "suporte@iscosistemas.com", "support@iscosistemas.zohosupport.com" });
+                ///await Email.SendEmailAsync("Suporte Técnico", order.ToString(), order.Email, KeyPassAndPhrase._emailSuporte, new string[] { "suporte@iscosistemas.com.br", "suporte@iscosistemas.com", "support@iscosistemas.zohosupport.com" });
+                ///todo arrumar email
             }
             else
             {
