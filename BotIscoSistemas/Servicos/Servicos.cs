@@ -123,7 +123,7 @@ namespace Bot4App.Services
             SmtpClient client = new SmtpClient();
             client.Port = 587;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.Credentials = new System.Net.NetworkCredential(string.IsNullOrEmpty(account) ? "jose.luiz@iscosistemas.com" : account, string.IsNullOrEmpty(pass) ? "Jymkatana_6985" : pass);
+//            client.Credentials = new System.Net.NetworkCredential("");
             client.UseDefaultCredentials = false;
             client.Timeout = 10000;
             client.Host = string.IsNullOrEmpty(host) ? "mail.iscosistemas.com" : host;
@@ -148,7 +148,7 @@ namespace Bot4App.Services
 
         public Task ExecuteEmailAsync(string subject, string body, string replayto, string to, string templateId, string[] cc = null, string[] bcc = null)
         {
-            var client = new SendGridClient("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");
+            var client = new SendGridClient(KeyPassAndPhrase._sendGridKey);
             var msg = new SendGridMessage()
             {
                 From = new EmailAddress(KeyPassAndPhrase._from),

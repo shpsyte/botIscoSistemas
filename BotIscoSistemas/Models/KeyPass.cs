@@ -1,7 +1,9 @@
 ﻿using Bot4App.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Web;
 
 namespace BotBlog.Models
@@ -45,15 +47,20 @@ namespace BotBlog.Models
         ///api isco
         public readonly static string endpointCustomer = $"http://www.api.iscosistemas.com.br/v1/Cliente/001/001/";
 
+        
+        
         ///Email Setup Config
         public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";//"support@iscosistemas.zohosupport.com";
         public readonly static string _emailVendas = "jose.iscosistemas@gmail.com";
         internal static string _emailCopiaVendas = "";//"jose.iscosistemas@zoho.com";
+        internal static string _sendGridKey = ConfigurationManager.AppSettings["SendGridKey"];
 
-        public readonly static string _host = "mail.iscosistemas.com.br";
-        public readonly static string _from = "jose.luiz@iscosistemas.com";
-        public readonly static string _userSmtp = "jose.luiz@iscosistemas.com";
-        public readonly static string _passSmtp = "Jymkatana_6985";
+
+
+        public readonly static string _host = "";
+        public readonly static string _from = "";
+        public readonly static string _userSmtp = "";
+        public readonly static string _passSmtp = "";
         public readonly static int _portSmtp = 587;
         public readonly static int _timeOut = 10000;
         
