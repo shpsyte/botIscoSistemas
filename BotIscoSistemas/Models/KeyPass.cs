@@ -27,55 +27,54 @@ namespace BotBlog.Models
         internal static string _ItsDoneContact = "Ok, enviado, já já aguém entra em contato..";
 
 
-
-        //luis
-        internal static string _LuisModelId = "c0eabe53-c8cc-4a05-bdde-052b434b95b3";
-        internal static string _LuiSubscriptionKey = "a8046f7776b7494db8f1ea873eac5c3e";
-
+        public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";//"support@iscosistemas.zohosupport.com";
+        public readonly static string _emailVendas = "jose.iscosistemas@gmail.com";
+        internal static string _emailCopiaVendas = "";//"jose.iscosistemas@zoho.com";
 
 
-        //qna 
-        public readonly static string _QnaKnowledgedIscoId  = "c2a14c09-4859-4a46-84de-2ce0cd01f6b1";
-        
-
-        public readonly static string _QnaSubscriptionKey = "ac1a50f16e0b400f93e81d87eea081fc"; 
-        public readonly static double _Score = 0.3;
-        public readonly static int _QtyAnswerReturn = 3;
 
 
 
         ///api isco
         public readonly static string endpointCustomer = $"http://www.api.iscosistemas.com.br/v1/Cliente/001/001/";
 
+
+
+
+        //luis
+        internal static string _LuisModelId = ConfigurationManager.AppSettings["LuisModelId"];
+        internal static string _LuiSubscriptionKey = ConfigurationManager.AppSettings["LuiSubscriptionKey"];
+
+
+
+        //qna 
+        public readonly static string _QnaKnowledgedIscoId  = ConfigurationManager.AppSettings["QnaKnowledgedIscoId"];  
+        public readonly static string _QnaSubscriptionKey = ConfigurationManager.AppSettings["QnaSubscriptionKey"]; 
+        public readonly static double _Score = 0.3;
+        public readonly static int _QtyAnswerReturn = 3;
+
+
         
         
-        ///Email Setup Config
-        public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";//"support@iscosistemas.zohosupport.com";
-        public readonly static string _emailVendas = "jose.iscosistemas@gmail.com";
-        internal static string _emailCopiaVendas = "";//"jose.iscosistemas@zoho.com";
+        ///SendGrid & Email
         internal static string _sendGridKey = ConfigurationManager.AppSettings["SendGridKey"];
 
 
 
-        public readonly static string _host = "";
-        public readonly static string _from = "";
-        public readonly static string _userSmtp = "";
-        public readonly static string _passSmtp = "";
-        public readonly static int _portSmtp = 587;
+        public readonly static string _host = ConfigurationManager.AppSettings["HostEmail"];
+        public readonly static string _from = ConfigurationManager.AppSettings["FromEmail"];
+        public readonly static string _userSmtp = ConfigurationManager.AppSettings["UserSmtp"];
+        public readonly static string _passSmtp = ConfigurationManager.AppSettings["PassSmtp"];
+        public readonly static string _portSmtp = ConfigurationManager.AppSettings["PortSmtp"];
         public readonly static int _timeOut = 10000;
         
 
 
-        //jose.luiz@iscosistemas.com
-
-
-        //documentodb
-        public readonly static string _cosmoDburi = "https://botiscosistemas.documents.azure.com:443/";
-        public readonly static string _cosmokey = "CMzzDGk4BaamsigNeUmhgXPX5wdp7P0ESUVwVYw7tiw6jVjir4xMurdaIFhQbDIYDYQ9XC0mX4maoiJFiXAnww==";
-
 
         //twilo
-        public readonly static string _twiloId = "ACac0aa58b65b7d8dc6976c4cb4c9b3534";
-        public readonly static string _twiloauthToken = "f1f39694c8b708c43250c4b836999d5f";
+        public readonly static string _twiloId = ConfigurationManager.AppSettings["TwiloId"];
+        public readonly static string _twiloauthToken = ConfigurationManager.AppSettings["TwiloToken"];
+
+
     }
 }
