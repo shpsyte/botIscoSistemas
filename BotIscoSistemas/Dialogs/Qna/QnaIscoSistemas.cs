@@ -1,4 +1,5 @@
-﻿using BotBlog.Dialogs.Dialog;
+﻿using Bot4App.Services;
+using BotBlog.Dialogs.Dialog;
 using BotBlog.Dialogs.Qna;
 using BotBlog.Models;
 using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
@@ -20,6 +21,8 @@ namespace Bot4App.QnA
         private readonly static string _DefatulMsg = KeyPassAndPhrase._MsgNotUndertand;
         private readonly static double _Score = KeyPassAndPhrase._Score;
         private readonly static int _QtyAnswerReturn = KeyPassAndPhrase._QtyAnswerReturn;
+        private List<string> listGenericFeature;
+
 
         public bool askLead { get; set; }
 
@@ -28,53 +31,14 @@ namespace Bot4App.QnA
         public QnaIscoSistemas(bool _askLead) : base(new QnAMakerService(new QnAMakerAttribute(_QnaSubscriptionKey, _QnaKnowledgedId, _DefatulMsg, _Score, _QtyAnswerReturn)))
         {
             this.askLead = _askLead;
+            this.listGenericFeature = Feature.ListGenericFeature();
         }
 
-        protected async Task SendAwnser(IDialogContext context, QnAMakerResults result)
-        {
-            var textFromQnA = result.Answers.First().Answer;
-            Activity resposta = ((Activity)context.Activity).CreateReply();
-             
-
-            var respostas = textFromQnA.Split('|');
-
-            if (respostas.Length == 1)
-            {
-                await context.PostAsync(textFromQnA);
-                return;
-            }
-
-            foreach (var item in respostas)
-            {
-
-                await Task.Delay(2000).ContinueWith(t =>
-                {
-                    context.PostAsync(item);
-                });
-
-            }
-
-        }
-
-         
-       
 
         protected override async Task RespondFromQnAMakerResultAsync(IDialogContext context, IMessageActivity message, QnAMakerResults result)
         {
-            await SendAwnser(context, result);
-            //await base.RespondFromQnAMakerResultAsync(context, message, result);
-            //if (result.Answers.Count > 0)
-            //{
-            //    var response = result.Answers.First().Answer;
-            //    await context.PostAsync(response);
-            //}
-            //else
-            //{
-            //    var response = "EU sei que você queria saber algo sobre mim, " +
-            //        "mas não sei lhe responder isso ainda...";
-            //    await context.PostAsync(response);
-
-            //}
+            var response = result.Answers.First().Answer;
+            await context.PostAsync(response);
 
         }
 
@@ -83,25 +47,112 @@ namespace Bot4App.QnA
         {
             if (askLead)
             {
-                //await Task.Delay(5000).ContinueWith(t =>
-                //{
-                //    context.Call(new GetContactInfoDialog((context.Activity as Activity).Text), ResumeAfterFeedback);
-                //});
-
+                await Task.Delay(1500).ContinueWith(t =>
+                {
+                    Activity feedback = GetFeedBackQuestion(context, false);
+                    context.PostAsync(feedback);
+                    context.Wait(GetMoreInfo);
+                });
             }
         }
 
 
-        private async Task ResumeAfterFeedback(IDialogContext context, IAwaitable<IMessageActivity> result)
+
+        public async Task GetMoreInfo(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            if (await result != null)
+            var userFeedback = await result;
+            Activity resposta = ((Activity)context.Activity).CreateReply();
+
+            if (userFeedback.Text.Contains("yes-positive-feedback") || userFeedback.Text.Contains("no-negative-feedback"))
             {
-                await MessageReceivedAsync(context, result);
+                if (userFeedback.Text.Contains("yes-positive-feedback"))
+                {
+                    string last;
+                    Random rnd = new Random();
+                    (context.ConversationData).TryGetValue("last", out last);
+                    this.listGenericFeature.Remove(last);
+                    int r = rnd.Next(listGenericFeature.Count);
+
+                   
+
+                    if (listGenericFeature.Count() == 0)
+                    {
+                        context.Done<IMessageActivity>(null);
+                    }
+                    else
+                    {
+
+                        var feature = listGenericFeature[r];
+                        (context.ConversationData).SetValue("last", feature);
+
+                        var dadosResposta = feature.Split('|');
+
+                        if (dadosResposta.Length == 1)
+                            await context.PostAsync(feature);
+                        else
+                        {
+                            resposta.Attachments.Add(CreateCard(dadosResposta[0], dadosResposta[1], dadosResposta[2]));
+                            await context.PostAsync(resposta);
+                        }
+
+
+                        await Task.Delay(1500).ContinueWith(t =>
+                        {
+
+                            Activity feedback = GetFeedBackQuestion(context, false);
+                            context.PostAsync(feedback);
+                            context.Wait(GetMoreInfo);
+                        });
+                    }
+
+
+                }
+                else if (userFeedback.Text.Contains("no-negative-feedback"))
+                {
+                    context.Done<IMessageActivity>(null);
+                }
             }
             else
             {
-                context.Done<IMessageActivity>(null);
+                await MessageReceivedAsync(context, result);
             }
+        }
+
+        private static Activity GetFeedBackQuestion(IDialogContext context, bool card = false)
+        {
+            string lastLoadMore;
+            (context.ConversationData).TryGetValue("lastloadmore", out lastLoadMore);
+
+            lastLoadMore = Feature.GetRandomListGenericLoadMore("lastLoadMore");
+            (context.ConversationData).SetValue("lastloadmore", lastLoadMore);
+
+
+            var feedback = ((Activity)context.Activity).CreateReply(lastLoadMore);
+            var actions = new List<CardAction>()
+            {
+                new CardAction(){ Title = "👍", Type=ActionTypes.PostBack, Value=$"yes-positive-feedback" },
+                new CardAction(){ Title = "👎", Type=ActionTypes.PostBack, Value=$"no-negative-feedback" }
+            };
+
+            if (card)
+            {
+                HeroCard herocard = new HeroCard
+                {
+                    // Title = lastLoadMore,
+                    Subtitle = "ou, pode me fazer outra pergunta...",
+                };
+                herocard.Buttons = actions;
+                feedback.Attachments.Add(herocard.ToAttachment());
+            }
+            else
+            {
+                feedback.SuggestedActions = new SuggestedActions()
+                {
+                    Actions = actions
+                };
+            }
+
+            return feedback;
         }
 
 
@@ -111,7 +162,7 @@ namespace Bot4App.QnA
             //await base.QnAFeedbackStepAsync(context, qnaMakerResults);
 
             //responding with the top answer when score is above some threshold
-            if (qnaMakerResults.Answers.Count > 0 && qnaMakerResults.Answers.FirstOrDefault().Score > 0.75)
+            if (qnaMakerResults.Answers.Count > 0 && qnaMakerResults.Answers.FirstOrDefault().Score > 0.80)
             {
                 await context.PostAsync(qnaMakerResults.Answers.FirstOrDefault().Answer);
             }
@@ -124,32 +175,23 @@ namespace Bot4App.QnA
         }
 
 
-
-        private Attachment CreateCard(string titulo, string descricao, string url, string img, string data)
+        private Attachment CreateCard(string titulo, string descricao, string url)
         {
-
-            
-            HeroCard card = new HeroCard
+            var animationCard = new AnimationCard
             {
                 Title = titulo,
                 Subtitle = descricao,
+               
+                Media = new List<MediaUrl>
+                {
+                    new MediaUrl()
+                    {
+                        Url = url
+                    }
+                }
             };
 
-
-            card.Buttons = new List<CardAction>
-            {
-                    new CardAction(ActionTypes.ShowImage, "Visite", value:url)
-            };
-
-
-
-            //card.Images = new List<CardImage>
-            //{
-            //    new CardImage(url = img)
-            //};
-
-            return card.ToAttachment();
-
+            return animationCard.ToAttachment();
         }
 
 

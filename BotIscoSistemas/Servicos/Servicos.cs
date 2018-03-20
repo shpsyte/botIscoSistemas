@@ -78,7 +78,7 @@ namespace Bot4App.Services
         }
     }
 
-     
+
 
     public class BestDestination
     {
@@ -123,7 +123,7 @@ namespace Bot4App.Services
             SmtpClient client = new SmtpClient();
             client.Port = 587;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-//            client.Credentials = new System.Net.NetworkCredential("");
+            //            client.Credentials = new System.Net.NetworkCredential("");
             client.UseDefaultCredentials = false;
             client.Timeout = 10000;
             client.Host = string.IsNullOrEmpty(host) ? "mail.iscosistemas.com" : host;
@@ -138,12 +138,12 @@ namespace Bot4App.Services
 
 
 
-         
+
         // send
         public Task SendEmailAsync(string subject, string body, string replayto, string to, string templateId = null, string[] cc = null, string[] bcc = null)
         {
             return ExecuteEmailAsync(subject, body, replayto, to, templateId, cc, bcc);
-          
+
         }
 
         public Task ExecuteEmailAsync(string subject, string body, string replayto, string to, string templateId, string[] cc = null, string[] bcc = null)
@@ -153,10 +153,10 @@ namespace Bot4App.Services
             {
                 From = new EmailAddress(KeyPassAndPhrase._from),
                 Subject = subject,
-               // PlainTextContent = body,
+                // PlainTextContent = body,
                 HtmlContent = string.Concat(HtmlEmailHeader, body, HtmlEmailFooter),
                 ReplyTo = new EmailAddress(replayto),
-                
+
             };
             msg.AddTo(new EmailAddress(to));
             if (!string.IsNullOrEmpty(templateId))
@@ -164,7 +164,7 @@ namespace Bot4App.Services
 
             return client.SendEmailAsync(msg);
 
-            
+
 
             //MailMessage message = new MailMessage(KeyPassAndPhrase._from, to);
             //message.Subject = subject;
@@ -278,6 +278,85 @@ namespace Bot4App.Services
 
     }
 
+
+
+    public class Feature
+    {
+
+
+        public static string GetRandomFeature(string notThis)
+        {
+            Random rnd = new Random();
+            List<string> list = ListGenericFeature();
+            list.Remove(notThis);
+
+            if (list.Count() > 0)
+            {
+                int r = rnd.Next(list.Count);
+
+                return list[r];
+            }else
+            {
+                return "not-anymore";
+            }
+        }
+
+
+        public static List<string> ListGenericFeature()
+        {
+
+            List<string> list = new List<string>();
+
+            list.Add("Em nuvem!|Nosso **sistema** roda em nuvem, você não precisa instalar nada...|https://media.giphy.com/media/aQBFZ5v7dleKs/giphy.gif|");
+            list.Add("Nota Ilimitadas!|Você tem notas ilimitadas, não se preocupe com limites..|https://gph.is/2r87BhL");
+            list.Add("Facilidade que ajuda|A emissão de notas é muito, muito fácil... |https://gph.is/1qzIOOt");
+            list.Add("Envio automático|Agente transmite oarquivo **XML** e PDF para o cliente...|https://gph.is/1qzIOOt");
+            list.Add("Seu contador agradece|O contador também recebe o lote de notas emitidas no mês |https://gph.is/H3imLo");
+            list.Add("Nota Grande ou para consumidor|Você pode emitir Nf-e e Nfc-e, dentro do mesmo sistema|https://gph.is/1cLzUXa");
+            list.Add("Preço justo|Além disso, custa apartir de R$ 69,90 / mês , muito barato|https://gph.is/1dYQ7si");
+            list.Add("Não fique sem suporte|Nosso suporte é gratuito e ilimitado... Isso é segurança!|https://gph.is/1maiWUY");
+            list.Add("Funções rápidas que facilitam|Possuímos a função cópia de Nota, que facilita a devolução de mercadorias|https://media.giphy.com/media/8Pdy3Dn7Wxd0jsRi21/giphy.gif");
+            list.Add("100% Homologado NF 4.0|Nosso sistema é homologado pela receita, é muita segurança para seu negócio|https://media.giphy.com/media/1lzgw4kIm6Ig6bNQPR/giphy.gif");
+            list.Add("Está pronto|Basta você virar a chave e sair trabalhando.|");
+
+            return list;
+
+        }
+
+
+
+
+
+        public static string GetRandomListGenericLoadMore(string notThis)
+        {
+            Random rnd = new Random();
+            List<string> list = ListGenericLoadMore();
+            list.Remove(notThis);
+
+           
+                int r = rnd.Next(list.Count);
+
+                return list[r];
+            
+        }
+
+
+        private static List<string> ListGenericLoadMore()
+        {
+
+            List<string> list = new List<string>();
+
+            list.Add("Quer mais informação ***sobre o sistema*** ? ");
+            list.Add("Posso lhe falar mais ***detalhe*** ?");
+            list.Add("Quer que eu busque mais ***informação***?");
+            list.Add("Posso ajudar com ***mais informação***, deseja ver ?");
+
+            return list;
+
+        }
+
+
+    }
 
 
 }
