@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Bot4App.Dialogs;
 using Bot4App.Dialogs.Luis.ai;
 using BotBlog.Models;
 using Microsoft.Bot.Builder.Dialogs;

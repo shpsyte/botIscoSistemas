@@ -38,7 +38,7 @@ namespace Bot4App.Forms
         public string Cliente;
         [Describe("Me de detalhes do título, como Número, Valor e Cliente")]
         public string Titulo;
-        [Describe("Pode informar o Teamview junto com a Senha ?")]
+        [Describe(description: "Teamview junto com a Senha ?")]
         public string Teamview;
         [Prompt("Ok, quer me falar algo mais, como detalhes ?")]
         [Optional]
@@ -92,7 +92,7 @@ namespace Bot4App.Forms
                         }))
                 .Field(nameof(RegisterSuport.UserName), isAccuserBo)
                 .Field(nameof(RegisterSuport.NumeroDaNota), isNF)
-                .Confirm("Você digitou o número {NumeroDaNota} está correta ? ", isNF)
+                //.Confirm("Você digitou o número {NumeroDaNota} está correta ? ", isNF)
                 .Field(nameof(RegisterSuport.Cliente), isCadastro)
                 .Field(nameof(RegisterSuport.Titulo), isFinanceiro)
                 .Field(nameof(RegisterSuport.Teamview), isTV)

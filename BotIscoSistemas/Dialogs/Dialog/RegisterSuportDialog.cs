@@ -20,11 +20,9 @@ namespace Bot4App.Dialogs.Dialog
     [Serializable]
     public class RegisterSuportDialog : IDialog<object>
     {
-        //private readonly static string _LuisModelId = KeyPassAndPhrase._LuisModelId;
-        //private readonly static string _LuiSubscriptionKey = KeyPassAndPhrase._LuiSubscriptionKey;
-        //private readonly static string _MsgNotUndertand = KeyPassAndPhrase._MsgNotUndertand;
-        //private readonly static string _DefaultMsgHelp = KeyPassAndPhrase._MsgHelp;
-        
+
+        SendMsg _email = new SendMsg();
+
 
         public Task StartAsync(IDialogContext context)
         {
@@ -32,9 +30,7 @@ namespace Bot4App.Dialogs.Dialog
             return Task.CompletedTask;
 
         }
-
-
-
+         
 
         private Task SendConversation(IDialogContext context, IAwaitable<object> result)
         {
@@ -106,7 +102,7 @@ namespace Bot4App.Dialogs.Dialog
             }
             catch (OperationCanceledException)
             {
-                await context.PostAsync("Você cancelou, espero que conseguiu sua ajuda, mas se precisar estou aqui, ;) ");
+                await context.PostAsync("Você cancelou, espero que conseguiu ajuda, mas se **precisar estou aqui** 😍 ");
                 context.Done<string>(null);
                 return;
             }
@@ -114,9 +110,9 @@ namespace Bot4App.Dialogs.Dialog
             if (order != null)
             {
 
-                await context.PostAsync("Ok, me da alguns minutos já resolvo para você e lhe respondo no **e-mail**, ta bom ?...");
-                ///await Email.SendEmailAsync("Suporte Técnico", order.ToString(), order.Email, KeyPassAndPhrase._emailSuporte, new string[] { "suporte@iscosistemas.com.br", "suporte@iscosistemas.com", "support@iscosistemas.zohosupport.com" });
-                ///todo arrumar email
+                await context.PostAsync("Hum, não consegui identificar o problema, me da alguns **minutos** já resolvo para você e lhe respondo no **e-mail**, ta bom ?...");
+                _email.SendEmailAsync(order.Name, "Suporte Técnico", order.ToString(), order.Email, KeyPassAndPhrase._emailSuporte, null, new string[] { "support@iscosistemas.zohosupport.com" }, null);
+               
             }
             else
             {

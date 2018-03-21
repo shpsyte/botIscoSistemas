@@ -15,7 +15,7 @@ namespace BotBlog.Models
         internal static string _MsgNotUndertand = $"Hum... Estou aprendendo isso ainda, vou falar com o **pessoal da Isco** para me explicar isso, ok ? ";
         internal static string _MsgHelp = $"Oi, tudo bem ? eu sou a ***Ian*** 😎, sou uma *Agente Virtual.* \n" +
             $" Ainda estou em treinamento, mas adoraria ajudá-lo 😍😍. Por favor, **descreva brevemente** do que você precisa..." ;
-        internal static string _GetContactInfo = $"Quer me deixar seu **Nome** e **Email**, para alguém (mais esperto que eu, 🙂) lhe enviar *mais informações* ?";
+        internal static string _GetContactInfo = $"Quer me deixar seu **Nome** e **Email**, para que eu🙂 possa lhe enviar *mais informações* ?";
 
         
 
@@ -28,8 +28,8 @@ namespace BotBlog.Models
 
 
         public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";//"support@iscosistemas.zohosupport.com";
-        public readonly static string _emailVendas = "jose.iscosistemas@gmail.com";
-        internal static string _emailCopiaVendas = "";//"jose.iscosistemas@zoho.com";
+        public readonly static string _emailVendas = "fernanda.galvao@iscosistemas.com";
+        internal static string _emailCopiaVendas ="jose.luiz@iscosistemas.com";
 
 
 
@@ -44,6 +44,7 @@ namespace BotBlog.Models
         //luis
         internal static string _LuisModelId = ConfigurationManager.AppSettings["LuisModelId"];
         internal static string _LuiSubscriptionKey = ConfigurationManager.AppSettings["LuiSubscriptionKey"];
+        internal static string _LuiEndPoint = ConfigurationManager.AppSettings["EndPointLuis"];
 
 
 

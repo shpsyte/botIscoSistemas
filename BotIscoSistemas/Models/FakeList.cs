@@ -21,8 +21,6 @@ namespace Bot4App.Models
             return list;
 
         }
-
-
         public static string GetRandomHatPhrase()
         {
             Random rnd = new Random();
@@ -32,8 +30,6 @@ namespace Bot4App.Models
             return list[r];
 
         }
-
-
         public static List<string> GetListJoke()
         {
 
@@ -52,8 +48,6 @@ namespace Bot4App.Models
 
             return list;
         }
-
-
         public static string GetRandomJoke()
         {
             Random rnd = new Random();
@@ -63,10 +57,6 @@ namespace Bot4App.Models
             return list[r];
 
         }
-
-
-
-
         public static List<string> GetListLaugh()
         {
 
@@ -88,8 +78,6 @@ namespace Bot4App.Models
 
             return list;
         }
-
-
         public static string GetRandomLaugh()
         {
             Random rnd = new Random();
@@ -99,10 +87,6 @@ namespace Bot4App.Models
             return list[r];
 
         }
-
-
-
-
         public static List<string> ListEmojiHappy()
         {
 
@@ -125,8 +109,6 @@ namespace Bot4App.Models
 
             return list;
         }
-
-
         public static string GetRandomEmojiHappy()
         {
             Random rnd = new Random();
@@ -136,8 +118,6 @@ namespace Bot4App.Models
             return list[r];
 
         }
-
-
         public static string GetListRandomEmojiHappy(int total = 7)
         {
             Random rnd = new Random();
@@ -156,11 +136,6 @@ namespace Bot4App.Models
             return s;
 
         }
-
-
-
-
-
         public static List<string> ListEmojiAngry()
         {
 
@@ -190,8 +165,6 @@ namespace Bot4App.Models
 
             return list;
         }
-
-
         public static string GetRandomEmojiAngry()
         {
             Random rnd = new Random();
@@ -201,8 +174,6 @@ namespace Bot4App.Models
             return list[r];
 
         }
-
-
         public static string GetListRandomEmojiAngry(int total = 7)
         {
             Random rnd = new Random();
@@ -221,9 +192,6 @@ namespace Bot4App.Models
             return s;
 
         }
-
-
-
 
     }
 }

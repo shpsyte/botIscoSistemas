@@ -49,12 +49,11 @@ namespace Bot4App.Forms
         public override string ToString()
         {
             string body = "";
-            body = $"<h3> Lead  </h3> <p> <b>Nome.:</b>  { Name } </p> " +
-                $"  <p> <b>Email.:</b>  { Email } </p>  " +
-                $"  <p> <b>Obs.:</b>  { Describe } </p>  ";
+            body = $"<p> <b>Nome.:</b>  { Name } </p> " +
+                   $"  <p> <b>Email.:</b>  { Email } </p>  " +
+                   $"  <p> <b>Obs.:</b>  { Describe } </p>  ";
 
-
-
+            
 
             return body;
         }

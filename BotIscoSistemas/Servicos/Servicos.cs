@@ -140,18 +140,33 @@ namespace Bot4App.Services
 
 
         // send
-        public Task SendEmailAsync(string subject, string body, string replayto, string to, string templateId = null, string[] cc = null, string[] bcc = null)
+        public Task SendEmailAsync(string nameCustomer, string subject, string body, string replayto, string to, string templateId = null, string[] cc = null, string[] bcc = null)
         {
-            return ExecuteEmailAsync(subject, body, replayto, to, templateId, cc, bcc);
+          //  return null;
+            return ExecuteEmailAsync(nameCustomer, subject, body, replayto, to, templateId, cc, bcc);
 
         }
 
-        public Task ExecuteEmailAsync(string subject, string body, string replayto, string to, string templateId, string[] cc = null, string[] bcc = null)
+
+        // send
+        public Task SendSmsAsync(string body, string to)
+        {
+
+          
+           return ExecuteSmsAsync(body, to);
+
+
+        }
+
+
+
+
+        private Task ExecuteEmailAsync(string nameCustomer,string subject, string body, string replayto, string to, string templateId, string[] cc = null, string[] bcc = null)
         {
             var client = new SendGridClient(KeyPassAndPhrase._sendGridKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress(KeyPassAndPhrase._from),
+                From = new EmailAddress(KeyPassAndPhrase._from, "Ian da Isco Sistemas"),
                 Subject = subject,
                 // PlainTextContent = body,
                 HtmlContent = string.Concat(HtmlEmailHeader, body, HtmlEmailFooter),
@@ -160,11 +175,33 @@ namespace Bot4App.Services
             };
             msg.AddTo(new EmailAddress(to));
             if (!string.IsNullOrEmpty(templateId))
-                msg.TemplateId = templateId;
+                msg.SetTemplateId(templateId);
+
+            msg.SetSubject(subject);
+
+            if (!string.IsNullOrEmpty(nameCustomer))
+            msg.AddSubstitution("-name-", nameCustomer);
 
             return client.SendEmailAsync(msg);
 
-
+            //static async Task Execute()
+            //{
+            //    var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
+            //    var client = new SendGridClient(apiKey);
+            //    var msg = new SendGridMessage();
+            //    msg.SetFrom(new EmailAddress("test@example.com", "Example User"));
+            //    msg.SetSubject("I'm replacing the subject tag");
+            //    msg.AddTo(new EmailAddress("test@example.com", "Example User"));
+            //    msg.AddContent(MimeType.Text, "I'm replacing the <strong>body tag</strong>");
+            //    msg.SetTemplateId("13b8f94f-bcae-4ec6-b752-70d6cb59f932");
+            //    msg.AddSubstitution("-name-", "Example User");
+            //    msg.AddSubstitution("-city-", "Denver");
+            //    var response = await client.SendEmailAsync(msg);
+            //    Console.WriteLine(response.StatusCode);
+            //    Console.WriteLine(response.Headers.ToString());
+            //    Console.WriteLine("\n\nPress any key to exit.");
+            //    Console.ReadLine();
+            //}
 
             //MailMessage message = new MailMessage(KeyPassAndPhrase._from, to);
             //message.Subject = subject;
@@ -176,7 +213,7 @@ namespace Bot4App.Services
             //message.ReplyToList.Add(new MailAddress(replayto));
             //if (cc != null && cc.Length > 0) foreach (var x in cc) message.CC.Add(x);
             //if (bcc != null && bcc.Length > 0) foreach (var x in bcc) message.Bcc.Add(x);
-            //SmtpClient client = new SmtpClient(KeyPassAndPhrase._host, KeyPassAndPhrase._portSmtp);
+            //SmtpClient client = new SmtpClient(KeyPassAndPhrase._host, Convert.ToInt32(KeyPassAndPhrase._portSmtp));
             //client.DeliveryMethod = SmtpDeliveryMethod.Network;
             //client.Credentials = new System.Net.NetworkCredential(KeyPassAndPhrase._userSmtp, KeyPassAndPhrase._passSmtp);
             //client.UseDefaultCredentials = false;
@@ -187,16 +224,8 @@ namespace Bot4App.Services
 
 
 
-        // send
-        public Task SendSmsAsync(string body, string to)
-        {
-            return ExecuteSmsAsync(body, to);
 
-
-        }
-
-
-        public Task ExecuteSmsAsync(string body, string to)
+        private Task ExecuteSmsAsync(string body, string to)
         {
             try
             {
@@ -210,7 +239,7 @@ namespace Bot4App.Services
             catch (Exception e)
             {
                 SendMsg _email = new SendMsg();
-                _email.SendEmailAsync("Erro no twilo", e.InnerException.Message, "jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
+                _email.SendEmailAsync("twilo", "Erro no twilo", e.InnerException.Message, "jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
 
 
             }

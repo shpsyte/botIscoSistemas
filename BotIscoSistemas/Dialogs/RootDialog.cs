@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Bot4App.QnA;
+using Bot4App.Services;
+using BotBlog.Dialogs.Dialog;
+using BotBlog.Models;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
@@ -25,9 +30,31 @@ namespace Bot4App.Dialogs
             int length = (activity.Text ?? string.Empty).Length;
 
             // return our reply to the user
-            await context.PostAsync($"You sent {activity.Text} which was {length} characters");
+            //await context.PostAsync($"You sent {activity.Text} which was {length} characters");
+            // await context.Forward(new GetEmailToSendInfoDialog("send.email.sistema", "Mais informação sistema"), ResumeAfterQnA, context.Activity, CancellationToken.None);
+            SendMsg _email = new SendMsg();
 
-            context.Wait(MessageReceivedAsync);
+               await context.PostAsync($"{KeyPassAndPhrase._MsgNotUndertand }");
+            await context.Forward(new GetNotUndorstondDialog(), ResumeAfterQnA, context.Activity, CancellationToken.None);
+
+
+
+            // context.Wait(MessageReceivedAsync);
+        }
+
+
+        private async Task ResumeAfterQnA(IDialogContext context, IAwaitable<object> result)
+        {
+            // await context.PostAsync("Vamos lá..");
+            //var activity = (context as Activity);
+            //ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+
+            //Activity reply = activity.CreateReply();
+            //reply.Type = ActivityTypes.Typing;
+            //reply.Text = null;
+            //await connector.Conversations.ReplyToActivityAsync(reply);
+
+            //context.Done<object>(null);
         }
     }
 }

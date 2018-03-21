@@ -84,7 +84,7 @@ namespace BotBlog.Dialogs.Qna
             else
             {
                 // no feedback, return to QnA dialog
-                context.Done<string>(null);
+                context.Done<IMessageActivity>(userFeedback);
             }
         }
     }

@@ -20,10 +20,7 @@ namespace Bot4App.Dialogs.Dialog
     [Serializable]
     public class RegisterBuyDialog : IDialog<object>
     {
-        //private readonly static string _LuisModelId = KeyPassAndPhrase._LuisModelId;
-        //private readonly static string _LuiSubscriptionKey = KeyPassAndPhrase._LuiSubscriptionKey;
-        //private readonly static string _MsgNotUndertand = KeyPassAndPhrase._MsgNotUndertand;
-        //private readonly static string _DefaultMsgHelp = KeyPassAndPhrase._MsgHelp;
+        SendMsg _email = new SendMsg();
         public decimal discont { get; set; }
 
         public RegisterBuyDialog(decimal _discont)
@@ -79,22 +76,11 @@ namespace Bot4App.Dialogs.Dialog
 
             if (order != null)
             {
-
                 await context.PostAsync("Ok, já estou criando sua base, como leva um tempinho, já aviso no seu **email** ou **telefone**, ta bom ?...");
-
-                Activity reply = activity.CreateReply();
-                reply.Type = ActivityTypes.Typing;
-                reply.Text = null;
-                ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-                await connector.Conversations.ReplyToActivityAsync(reply);
-
-                await Task.Delay(2000);
-
                 await context.PostAsync($"Obrigado pela confiança...{ order.Nome }");
                 await context.PostAsync($" Love to help! 😍😍 ");
 
-                ///await Email.SendEmailAsync("Nova Venda CREATELEAD", order.ToString(), order.Email, KeyPassAndPhrase._emailVendas, new string[] { "suporte@iscosistemas.com.br", "jose.luiz@iscosistemas.com", "jose.iscosistemas@zoho.com" });
-                ///todo arrumar email
+                _email.SendEmailAsync(order.Nome, "Nova Venda CREATELEAD", order.ToString(), order.Email, KeyPassAndPhrase._emailVendas, null, new string[] { "suporte@iscosistemas.com.br", "jose.luiz@iscosistemas.com"});
             }
             else
             {

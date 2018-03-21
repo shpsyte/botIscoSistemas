@@ -184,30 +184,23 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
-    <Compile Include="Dialogs\Dialog\GetContactInfoDialog.cs" />
-    <Compile Include="Dialogs\Dialog\RegisterLeadDialog.cs" />
+    <Compile Include="Dialogs\Dialog\GetNotUndorstondDialog.cs" />
+    <Compile Include="Dialogs\Dialog\GetEmailToSendInfoDialog.cs" />
+    <Compile Include="Dialogs\Dialog\LoadMoreInfoDialog.cs" />
     <Compile Include="Dialogs\Dialog\RegisterBuyDialog.cs" />
     <Compile Include="Dialogs\Luis.ai\LuisBasicDialog.cs" />
     <Compile Include="Dialogs\Dialog\RegisterSuportDialog.cs" />
-    <Compile Include="Dialogs\Luis.ai\PayArticleDialog.cs" />
-    <Compile Include="Dialogs\Luis.ai\SugestionArticleDialog.cs" />
-    <Compile Include="Dialogs\Luis.ai\RequestQuoteDialog.cs" />
-    <Compile Include="Dialogs\Qna\FeedbackAskBuy.cs" />
-    <Compile Include="Dialogs\Qna\FeedbackAskLeadDialog.cs" />
     <Compile Include="Dialogs\Qna\FeedbackDialog.cs" />
     <Compile Include="Dialogs\Qna\QnaIscoSistemas.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
     <Compile Include="Forms\RegisterBuy.cs" />
     <Compile Include="Forms\RegisterSuport.cs" />
     <Compile Include="Forms\Enums.cs" />
-    <Compile Include="Forms\PayArticles.cs" />
-    <Compile Include="Forms\SuggesetionArticle.cs" />
     <Compile Include="Forms\CaptureLead.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Customer.cs" />
-    <Compile Include="Models\Domain.cs" />
     <Compile Include="Models\FakeList.cs" />
     <Compile Include="Models\KeyPass.cs" />
     <Compile Include="Models\QnAMakerResult.cs" />
