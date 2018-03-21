@@ -55,7 +55,7 @@ namespace Bot4App.Dialogs.Luis.ai
         {
             _sendMsg.SendEmailAsync("Oi, alguém fez esta pergunta e não soube responder...", $" <b> { (context.Activity as Activity).Text } </b>","jose.iscosistemas@gmail.com", "jose.iscosistemas@gmail.com", null);
             await context.PostAsync($"{_MsgNotUndertand}");
-            await context.Forward(new GetNotUndorstondDialog(),ResumeAfterQnA, context.Activity, CancellationToken.None);
+            await context.Forward(new GetNotUndorstondDialog(), ResumeAfterInfo, context.Activity, CancellationToken.None);
 
 
         }
@@ -112,6 +112,16 @@ namespace Bot4App.Dialogs.Luis.ai
             
         }
 
+
+        [LuisIntent("sense-bot")]
+        public async Task Sense(IDialogContext context, LuisResult result)
+        {
+            var userQuestion = (context.Activity as Activity).Text;
+            await context.Forward(new QnaIscoSistemas(false), ResumeAfterQnA, context.Activity, CancellationToken.None);
+            //public async Task None(IDialogContext context, LuisResult result) => await context.PostAsync($"{_MsgNotUndertand}\n{_DefaultMsgHelp}");
+        }
+
+
         [LuisIntent("infosystem-bot")]
         public async Task GetInfoAndSendEmail(IDialogContext context, LuisResult result)
         {
@@ -135,14 +145,6 @@ namespace Bot4App.Dialogs.Luis.ai
         }
 
 
-
-        [LuisIntent("sense-bot")]
-        public async Task Sense(IDialogContext context, LuisResult result)
-        {
-            var userQuestion = (context.Activity as Activity).Text;
-            await context.Forward(new QnaIscoSistemas(false), ResumeAfterQnA, context.Activity, CancellationToken.None);
-            //public async Task None(IDialogContext context, LuisResult result) => await context.PostAsync($"{_MsgNotUndertand}\n{_DefaultMsgHelp}");
-        }
 
 
         [LuisIntent("help-bot")]

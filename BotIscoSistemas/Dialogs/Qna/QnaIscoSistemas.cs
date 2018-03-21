@@ -118,8 +118,31 @@ namespace Bot4App.QnA
             }
             else
             {
-                string urlMedia = dadosResposta[3] ?? "";
-                string urlOpen = dadosResposta[4] ?? "";
+                string urlMedia = "";
+                string urlOpen = "";
+
+                try
+                {
+                    urlMedia = dadosResposta[3];
+                }
+                catch (Exception)
+                {
+
+                    urlMedia = "";
+                }
+
+                try
+                {
+                    urlOpen = dadosResposta[4];
+                }
+                catch (Exception)
+                {
+
+                    urlOpen = "";
+                }
+
+               
+
                 var cardProduct = CreateCard(dadosResposta[0], dadosResposta[1], dadosResposta[2], urlMedia, urlOpen);
                 resposta.Attachments.Add(cardProduct);
 
