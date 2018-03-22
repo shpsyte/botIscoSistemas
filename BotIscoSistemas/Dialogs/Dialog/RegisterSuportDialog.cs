@@ -111,7 +111,11 @@ namespace Bot4App.Dialogs.Dialog
             {
 
                 await context.PostAsync("Hum, não consegui identificar o problema, me da alguns **minutos** já resolvo para você e lhe respondo no **e-mail**, ta bom ?...");
-                _email.SendEmailAsync(order.Name, "Suporte Técnico", order.ToString(), order.Email, KeyPassAndPhrase._emailSuporte, null, new string[] { "support@iscosistemas.zohosupport.com" }, null);
+                _email.SendEmailAsync(order.Name, 
+                    "Suporte Técnico", 
+                    order.ToString(), 
+                    order.Email, 
+                    KeyPassAndPhrase._emailSuporte, null, new string[] { "support@iscosistemas.zohosupport.com" }, null);
                
             }
             else

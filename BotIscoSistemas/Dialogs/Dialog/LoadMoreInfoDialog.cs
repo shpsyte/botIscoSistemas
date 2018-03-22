@@ -133,13 +133,13 @@ namespace BotBlog.Dialogs.Dialog
 
 
                 //send email to customer
-                _email.SendEmailAsync("Oi, sou eu a **Ian**. Segue as informações sobre o sistema que solicitou",
+                _email.SendEmailAsync(order.Name, "Oi, sou eu a **Ian**. Segue as informações sobre o sistema que solicitou",
                                                 "",
                                                 KeyPassAndPhrase._emailVendas,
                                                 order.Email,
                                                 this.templateEmailid,
                                                 null,
-                                                new string[] { KeyPassAndPhrase._emailVendas, KeyPassAndPhrase._emailCopiaVendas });
+                                                null);
 
 
 

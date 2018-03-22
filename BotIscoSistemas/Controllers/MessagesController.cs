@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Bot4App.Dialogs;
 using Bot4App.Dialogs.Luis.ai;
+using Bot4App.Services;
 using BotBlog.Models;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.FormFlow;
@@ -25,6 +26,7 @@ namespace Bot4App
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+            SendMsg _email = new SendMsg();
             var _msg = KeyPassAndPhrase._MsgHelp;
 
             if (activity.Type == ActivityTypes.Message)
@@ -47,9 +49,7 @@ namespace Bot4App
                             reply.Text = $"{_msg} " ;
                             await connector.Conversations.ReplyToActivityAsync(reply);
 
-
-
-                            //await SendBotIsTyping(activity);
+                             //await SendBotIsTyping(activity);
                             //await Task.Delay(2000); // 4 second delay
                             //reply.Text = _msg;
                             //await connector.Conversations.ReplyToActivityAsync(reply);

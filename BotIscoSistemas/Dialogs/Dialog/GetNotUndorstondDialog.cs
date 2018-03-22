@@ -138,13 +138,13 @@ namespace BotBlog.Dialogs.Dialog
                 (context.ConversationData).SetValue("CustomerEmail", order.Email);
 
 
-                //send email to customer
+                
                 _email.SendEmailAsync(order.Name, $"Oi, sou eu a Ian. Segue as informações que { order.Name } solicitou",
                                                 order.ToString(),
                                                 order.Email,
                                                 KeyPassAndPhrase._emailVendas,
                                                 null,
-                                                new string[] { KeyPassAndPhrase._emailVendas, KeyPassAndPhrase._emailCopiaVendas });
+                                                null);
                 
 
                 await context.PostAsync("Ok, já já vou **aprender isso** e te respondo, mas se precisar de outra informação pode **me perguntar por aqui** 🙂 ");

@@ -53,7 +53,7 @@ namespace Bot4App.Dialogs.Luis.ai
         [LuisIntent("None")]
         public async Task NotUnderstod(IDialogContext context, LuisResult result)
         {
-            _sendMsg.SendEmailAsync("Oi, alguém fez esta pergunta e não soube responder...", $" <b> { (context.Activity as Activity).Text } </b>","jose.iscosistemas@gmail.com", "jose.iscosistemas@gmail.com", null);
+            _sendMsg.SendEmailAsync("Customer","Oi, alguém fez esta pergunta e não soube responder...", $" <b> { (context.Activity as Activity).Text } </b>","jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com", null);
             await context.PostAsync($"{_MsgNotUndertand}");
             await context.Forward(new GetNotUndorstondDialog(), ResumeAfterInfo, context.Activity, CancellationToken.None);
 
@@ -126,7 +126,7 @@ namespace Bot4App.Dialogs.Luis.ai
         public async Task GetInfoAndSendEmail(IDialogContext context, LuisResult result)
         {
             //await context.PostAsync($" Legal, vou lhe enviar um e-mail contendo o que precisa, você também pode **me perguntar** qualquer coisa..");
-            await context.Forward(new GetEmailToSendInfoDialog("d5784386-1182-4c5f-8fe2-d12b08b93869", "Mais informação sistema"), ResumeAfterInfo, context.Activity, CancellationToken.None);
+            await context.Forward(new GetEmailToSendInfoDialog("ae2e85f2-82e2-4a12-b393-bce14be35fcb", "Mais informação sistema"), ResumeAfterInfo, context.Activity, CancellationToken.None);
 
         }
          

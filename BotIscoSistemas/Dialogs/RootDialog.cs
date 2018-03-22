@@ -34,8 +34,7 @@ namespace Bot4App.Dialogs
             // await context.Forward(new GetEmailToSendInfoDialog("send.email.sistema", "Mais informação sistema"), ResumeAfterQnA, context.Activity, CancellationToken.None);
             SendMsg _email = new SendMsg();
 
-               await context.PostAsync($"{KeyPassAndPhrase._MsgNotUndertand }");
-            await context.Forward(new GetNotUndorstondDialog(), ResumeAfterQnA, context.Activity, CancellationToken.None);
+            await context.Forward(new QnaIscoSistemas(true), ResumeAfterQnA, context.Activity, CancellationToken.None);
 
 
 

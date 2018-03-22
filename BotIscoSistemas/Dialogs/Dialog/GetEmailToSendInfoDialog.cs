@@ -171,14 +171,15 @@ namespace BotBlog.Dialogs.Dialog
                 (context.ConversationData).SetValue("CustomerEmail", order.Email);
 
 
-                //send email to customer
-                _email.SendEmailAsync("Oi, sou eu a **Ian**. Segue as informações sobre o sistema que solicitou",
+                
+                ///Envia email direto para o consumidor com copia para vendas
+                _email.SendEmailAsync(order.Name, "Oi, sou eu a **Ian**. Segue as informações sobre o sistema que solicitou",
                                                 "",
                                                 KeyPassAndPhrase._emailVendas,
                                                 order.Email,
                                                 this.templateEmailid,
                                                 null,
-                                                new string[] { KeyPassAndPhrase._emailVendas, KeyPassAndPhrase._emailCopiaVendas });
+                                                null);
 
 
 

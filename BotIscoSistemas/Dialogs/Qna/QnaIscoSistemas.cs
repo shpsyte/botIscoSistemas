@@ -59,7 +59,8 @@ namespace Bot4App.QnA
             {
                 (context.ConversationData).SetValue("qtperguntas", 0);
                 _qtdePerguntas = 0;
-                context.Call(new LoadMoreInfoDialog("send.email.sistema", "Quer que eu lhe envie *mais informação* por e-mail? 🙂"), ResumeAfterFeedback);
+                await context.PostAsync("Se quiser posso mandar informações no **seu email**, basta me informar..  🙂 ");
+                //  context.Call(new LoadMoreInfoDialog("ae2e85f2-82e2-4a12-b393-bce14be35fcb", "Quer que eu lhe envie *mais informação* por e-mail? 🙂"), ResumeAfterFeedback);
             }
 
 
