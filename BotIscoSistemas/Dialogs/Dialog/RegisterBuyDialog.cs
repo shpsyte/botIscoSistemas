@@ -40,18 +40,10 @@ namespace Bot4App.Dialogs.Dialog
         private Task SendConversation(IDialogContext context, IAwaitable<object> result)
         {
             var activity = (context.Activity as Activity);
-            CultureInfo lang = new CultureInfo("pt-BR");
-            Thread.CurrentThread.CurrentCulture = lang;
-            Thread.CurrentThread.CurrentUICulture = lang;
-            context.Activity.AsMessageActivity().Locale = lang.ToString();
-            var capLeadForm = new RegisterBuy();
-           // capLeadForm.Discount = useDiscont;
+            (context.ConversationData).TryGetValue("User.Setting.Name", out string nome);
+            (context.ConversationData).TryGetValue("User.Setting.Email", out string email);
 
-            string[] words = activity.Text.Split(' ');
-            string[] nfe = new string[] { "nfe", "nota fiscal" };
-            string[] nfce = new string[] { "nfce", "consumidor", "usuario" };
-
-           
+            var capLeadForm = new RegisterBuy(nome, email);
 
             var form = new FormDialog<RegisterBuy>(capLeadForm, RegisterBuy.BuildForm, FormOptions.PromptInStart, null);
             context.Call<RegisterBuy>(form, FormCompleteCallback);
@@ -76,16 +68,20 @@ namespace Bot4App.Dialogs.Dialog
 
             if (order != null)
             {
+                (context.ConversationData).SetValue("User.Setting.Name", order.Nome);
+                (context.ConversationData).SetValue("User.Setting.Email", order.Email);
+
+                await _email.SendEmailAsync(nameCustomer: order.Nome,
+                                            subject: "Nova Venda CREATELEAD",
+                                            body: order.ToString(),
+                                            to: KeyPassAndPhrase._emailVendas,
+                                            replayto: order.Email,
+                                            cc: new string[] { KeyPassAndPhrase._emailSuporte });
+
                 await context.PostAsync("Ok, já estou criando sua base, como leva um tempinho, já aviso no seu **email** ou **telefone**, ta bom ?...");
                 await context.PostAsync($"Obrigado pela confiança...{ order.Nome }");
                 await context.PostAsync($" Love to help! 😍😍 ");
 
-                _email.SendEmailAsync(order.Nome, 
-                    "Nova Venda CREATELEAD",
-                    order.ToString(), 
-                    order.Email,
-                    KeyPassAndPhrase._emailVendas, 
-                    null, new string[] { "suporte@iscosistemas.com", "jose.luiz@iscosistemas.com", "support@iscosistemas.zohosupport.com"});
             }
             else
             {

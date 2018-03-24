@@ -110,12 +110,15 @@ namespace Bot4App.Dialogs.Dialog
             if (order != null)
             {
 
+                await _email.SendEmailAsync(nameCustomer: order.Name,
+                                            subject: "Suporte Ténico",
+                                            body: order.ToString(),
+                                            to: KeyPassAndPhrase._emailSuporte,
+                                            replayto: order.Email,
+                                            cc: new string[] { KeyPassAndPhrase._emailSuportTicket });
+
                 await context.PostAsync("Hum, não consegui identificar o problema, me da alguns **minutos** já resolvo para você e lhe respondo no **e-mail**, ta bom ?...");
-                _email.SendEmailAsync(order.Name, 
-                    "Suporte Técnico", 
-                    order.ToString(), 
-                    order.Email, 
-                    KeyPassAndPhrase._emailSuporte, null, new string[] { "support@iscosistemas.zohosupport.com" }, null);
+
                
             }
             else

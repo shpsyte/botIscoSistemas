@@ -18,19 +18,31 @@ using Twilio.Types;
 
 
 namespace Bot4App.Services
-{  
+{
 
     public class BestDestination
     {
-        public static string GetBestEmailTo(string to)
+        public static string GetBestEmailTo(string agent)
         {
-            string best = "jose.luiz@iscosistemas.com.br";
-            to = to.ToLower();
-            string[] fer = new string[] { "fernanda", "fer", "venda", "vendas", "fianceiro" };
 
-            foreach (var item in fer)
-                if (item.ToLower().Contains(to))
-                    best = "fernanda.galvao@iscosistemas.com.br";
+
+            string best = KeyPassAndPhrase._emailSuporte;
+
+            if (!string.IsNullOrEmpty(agent))
+            {
+                
+                string[] fernanda = new string[] { "fernanda", "fer", "venda", "vendas", "financeiro" };
+                string[] jose     = new string[] { "ze", "jose", "luis", "luiz", "suporte", "tecnico" };
+
+                foreach (var item in fernanda)
+                    if (agent.ToLower().Contains(item))
+                        best = KeyPassAndPhrase._emailVendas;
+
+                foreach (var item in jose)
+                    if (agent.ToLower().Contains(item))
+                        best = KeyPassAndPhrase._emailSuporte;
+
+            }
 
             return best;
         }
@@ -38,13 +50,16 @@ namespace Bot4App.Services
         public static string GetBestFoneTo(string to)
         {
             string best = "41999325815";
-            to = to.ToLower();
-            string[] fer = new string[] { "fernanda", "fer", "venda", "vendas", "fianceiro" };
 
-            foreach (var item in fer)
-                if (item.ToLower().Contains(to))
-                    best = "41996030814";
+            if (!string.IsNullOrEmpty(to))
+            {
+                to = to.ToLower();
+                string[] fer = new string[] { "fernanda", "fer", "venda", "vendas", "fianceiro" };
 
+                foreach (var item in fer)
+                    if (item.ToLower().Contains(to))
+                        best = "41996030814";
+            }
             return best;
         }
 
@@ -75,13 +90,12 @@ namespace Bot4App.Services
 
 
 
-        
-        // send
-        public Task SendEmailAsync(string nameCustomer, string subject, string body, string replayto, string to, string templateId = null, string[] cc = null, string[] bcc = null)
-        {
-          //  return null;
-            return ExecuteEmailAsync(nameCustomer, subject, body, replayto, to, templateId, cc, bcc);
 
+        // send
+        public Task SendEmailAsync(string nameCustomer = null, string subject = null, string body = null, string replayto = null, string to = null, string templateId = null, string[] cc = null, string[] bcc = null)
+        {
+            return  ExecuteEmailAsync(nameCustomer, subject, body, replayto, to, templateId, cc, bcc);
+            
         }
 
 
@@ -89,8 +103,8 @@ namespace Bot4App.Services
         public Task SendSmsAsync(string body, string to)
         {
 
-          
-           return ExecuteSmsAsync(body, to);
+
+            return ExecuteSmsAsync(body, to);
 
 
         }
@@ -98,7 +112,7 @@ namespace Bot4App.Services
 
 
 
-        private Task ExecuteEmailAsync(string nameCustomer,string subject, string body, string replayto, string to, string templateId, string[] cc = null, string[] bcc = null)
+        private Task ExecuteEmailAsync(string nameCustomer, string subject, string body, string replayto, string to, string templateId, string[] cc = null, string[] bcc = null)
         {
             var client = new SendGridClient(KeyPassAndPhrase._sendGridKey);
             var msg = new SendGridMessage()
@@ -107,7 +121,9 @@ namespace Bot4App.Services
                 Subject = subject,
                 PlainTextContent = body,
                 HtmlContent = string.Concat(HtmlEmailHeader, body, HtmlEmailFooter),
-                ReplyTo = new EmailAddress(replayto),
+                ReplyTo = new EmailAddress(string.IsNullOrEmpty(replayto) ? to : replayto),
+                
+                
             };
             msg.AddTo(new EmailAddress(to));
 
@@ -115,12 +131,31 @@ namespace Bot4App.Services
             if (!string.IsNullOrEmpty(templateId))
                 msg.SetTemplateId(templateId);
 
-          
+            msg.SetSubject(subject);
+
+            if (cc != null)
+                foreach (var item in cc)
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(item.ToLower().Trim()));
+
+
+            //if (bcc != null)
+            //    foreach (var item in bcc)
+            //        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(item));
+
+
 
             if (!string.IsNullOrEmpty(nameCustomer))
                 msg.AddSubstitution("-name-", nameCustomer);
 
-            return client.SendEmailAsync(msg);
+            var Random = new Random();
+            var cupom = Random.Next(100,150);
+
+            msg.AddSubstitution("-cupom-", "AA" + cupom.ToString());
+
+
+            return  client.SendEmailAsync(msg);
+            //return email;
+           
 
 
             //var myMessage = new SendGridMessage()
@@ -186,6 +221,7 @@ namespace Bot4App.Services
 
         private Task ExecuteSmsAsync(string body, string to)
         {
+
             try
             {
                 TwilioClient.Init(KeyPassAndPhrase._twiloId, KeyPassAndPhrase._twiloauthToken);
@@ -197,8 +233,8 @@ namespace Bot4App.Services
             }
             catch (Exception e)
             {
-                SendMsg _email = new SendMsg();
-                _email.SendEmailAsync("twilo", "Erro no twilo", e.InnerException.Message, "jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
+
+                this.SendEmailAsync("twilo", "Erro no twilo", e.InnerException.Message, "jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com");
 
 
             }
@@ -283,7 +319,8 @@ namespace Bot4App.Services
                 int r = rnd.Next(list.Count);
 
                 return list[r];
-            }else
+            }
+            else
             {
                 return "not-anymore";
             }
@@ -321,11 +358,11 @@ namespace Bot4App.Services
             List<string> list = ListGenericLoadMore();
             list.Remove(notThis);
 
-           
-                int r = rnd.Next(list.Count);
 
-                return list[r];
-            
+            int r = rnd.Next(list.Count);
+
+            return list[r];
+
         }
 
 

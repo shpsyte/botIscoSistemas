@@ -36,35 +36,58 @@ namespace Bot4App.QnA
 
         protected override async Task RespondFromQnAMakerResultAsync(IDialogContext context, IMessageActivity message, QnAMakerResults result)
         {
-
             //await base.RespondFromQnAMakerResultAsync(context, message, result);
+            // await context.PostAsync(result.Answers.First().Answer);
+
             if (result.Answers.Count > 0)
             {
-                // await context.PostAsync(result.Answers.First().Answer);
-                 
                 await context.PostAsync(FormatMsg(context, result));
-                 
-
             }
+
+
         }
 
         ////// Override to log matched Q&A before ending the dialog
         protected override async Task DefaultWaitNextMessageAsync(IDialogContext context, IMessageActivity message, QnAMakerResults results)
         {
-            (context.ConversationData).TryGetValue("qtperguntas", out _qtdePerguntas);
+            (context.ConversationData).TryGetValue("User.Setting.Interesse", out _qtdePerguntas);
             _qtdePerguntas++;
-            (context.ConversationData).SetValue("qtperguntas", _qtdePerguntas);
+            (context.ConversationData).SetValue("User.Setting.Interesse", _qtdePerguntas);
 
-            if (_qtdePerguntas >= 3)
+
+            if (askLead)
             {
-                (context.ConversationData).SetValue("qtperguntas", 0);
+                if (_qtdePerguntas >= 3)
+                {
+                    (context.ConversationData).SetValue("User.Setting.Interesse", 0);
+                    _qtdePerguntas = 0;
+
+                    string title = "Nosso **sistema é bem completo** .. \n " +
+                                    " Deixa eu te enviar um *e-mail com estas informações* ? \n" +
+                                    " É bem rápido...";
+
+                    var lead = new SendEmailToCustomerDialog(KeyPassAndPhrase._templateEmailSalesId, "Quer que eu lhe envie *mais informação* por e-mail? 🙂", title);
+
+                    context.Call(lead, ResumeAfterFeedback);
+                }
+            }else
+            {
+                (context.ConversationData).SetValue("User.Setting.Interesse", 0);
                 _qtdePerguntas = 0;
-                await context.PostAsync("Se quiser posso mandar informações no **seu email**, basta me informar..  🙂 ");
-                //  context.Call(new LoadMoreInfoDialog("ae2e85f2-82e2-4a12-b393-bce14be35fcb", "Quer que eu lhe envie *mais informação* por e-mail? 🙂"), ResumeAfterFeedback);
             }
 
+        }
+
+
+
+        private async Task ResumeAfterFeedback(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var userFeedback = await result;
+            context.Done<IMessageActivity>(userFeedback);
 
         }
+
+
 
 
         ////// Qunado o ML está ativa este metodo pergunta: "Você quis dizer isso ?" para que o qna possa aprender.
@@ -85,26 +108,14 @@ namespace Bot4App.QnA
 
 
 
-        private async Task ResumeAfterFeedback(IDialogContext context, IAwaitable<IMessageActivity> result)
-        {
-
-            if (await result != null)
-            {
-                await MessageReceivedAsync(context, result);
-            }
-            else
-            {
-                context.Done<IMessageActivity>(null);
-            }
-        }
-
-
 
 
         protected IMessageActivity FormatMsg(IDialogContext context, QnAMakerResults result)
         {
 
             var primeiraresposta = result.Answers.First().Answer;
+
+
             Activity resposta = ((Activity)context.Activity).CreateReply();
             var dadosResposta = primeiraresposta.Split('|');
             resposta.AttachmentLayout = AttachmentLayoutTypes.Carousel;
@@ -112,10 +123,9 @@ namespace Bot4App.QnA
 
             if (dadosResposta.Length == 1)
             {
-                var cardProduct = CreateCard("", "", primeiraresposta, "", "");
-                resposta.Attachments.Add(cardProduct);
-
-
+                //var cardProduct = CreateCard("", "", primeiraresposta, "", "");
+                //resposta.Attachments.Add(cardProduct);
+                resposta.Text = primeiraresposta;
             }
             else
             {
@@ -142,7 +152,7 @@ namespace Bot4App.QnA
                     urlOpen = "";
                 }
 
-               
+
 
                 var cardProduct = CreateCard(dadosResposta[0], dadosResposta[1], dadosResposta[2], urlMedia, urlOpen);
                 resposta.Attachments.Add(cardProduct);

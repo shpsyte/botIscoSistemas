@@ -64,37 +64,25 @@ namespace BotBlog.Dialogs.Dialog
 
 
             var feedback = ((Activity)context.Activity).CreateReply($"Legal, nosso sistema é muito prático: \n " +
-                $" * Custa apenas R$ **69,90/Mês**  \n" +
-                $" * É **Online**, você só precisa de Internet  \n" +
-                $" * **Não tem limite** para emissão de notas  \n" +
-                $" * É **homologado** para Nota do Consumidor **(Nfc-e)** e **(Nf-e)** \n" +
-                $" * Suporte **Gratuito e Ilimitado**  \n" +
-                $" * Envio das notas **por Email (Cliente e contador)**  \n" +
-                $" * Está pronto para uso!");
-
-
-            //feedback.SuggestedActions = new SuggestedActions()
-            //{
-            //    Actions = new List<CardAction>()
-            //    {
-            //        new CardAction(){ Title = "👍", Type=ActionTypes.PostBack, Value=$"yes-positive-feedback" },
-            //        new CardAction(){ Title = "👎", Type=ActionTypes.PostBack, Value=$"no-negative-feedback" }
-            //    }
-            //};
+               $" * Custa apenas  **R$ 69,90/Mês**  \n" +
+               $" * É **Online**, você só precisa de Internet  \n" +
+               $" * É **homologado** para Nota do Consumidor **(Nfc-e)** e **(Nf-e)** \n" +
+               $" * Suporte **Gratuito e Ilimitado**  \n" +
+               $" * Envio das notas **por Email (Cliente e Contador)**  \n" +
+               $" * Está **pronto** para uso!");
 
 
             feedback.Attachments = new List<Attachment>
                 {
                     new HeroCard()
                     {
-                        Title = "Qual seu email ?",
+                       // Title = "Qual seu email ?",
                        // Subtitle = "Ou pode me fazer outra pergunta...",
-                        Text = "Deixa eu te enviar um folder com estas informações no seu email, mas se preferir \n" +
-                        " pode me fazer perguntas por aqui mesmo... ",
+                        Text = "Deixa eu te enviar um **folder** com estas informações no seu email ? ",
                         Buttons = new List<CardAction>
                         {
                             new CardAction(){ Title = "👍 Sim me envie por email..", Type=ActionTypes.PostBack, Value=$"yes-positive-feedback" },
-                            new CardAction(){ Title = "👎 Prefiro perguntar aqui..", Type=ActionTypes.PostBack, Value=$"no-negative-feedback" }
+                            //new CardAction(){ Title = "👎 Prefiro perguntar aqui..", Type=ActionTypes.PostBack, Value=$"no-negative-feedback" }
                         }
                     }.ToAttachment()
                 };
@@ -103,7 +91,7 @@ namespace BotBlog.Dialogs.Dialog
             await context.PostAsync(feedback);
 
             context.Wait(this.MessageReceivedAsync);
-
+             
         }
 
 
@@ -112,30 +100,24 @@ namespace BotBlog.Dialogs.Dialog
             var userFeedback = await result;
 
 
-            if (userFeedback.Text.Contains("yes-positive-feedback") || userFeedback.Text.Contains("no-negative-feedback"))
+            if (userFeedback.Text.Contains("yes-positive-feedback"))
             {
-                if (userFeedback.Text.Contains("yes-positive-feedback"))
-                {
-                    var activity = (context.Activity as Activity);
-                    var capLeadForm = new CaptureLead();
+
+                var activity = (context.Activity as Activity);
+                var capLeadForm = new CaptureLead();
 
 
-                    (context.ConversationData).TryGetValue("CustomerName", out nome);
-                    (context.ConversationData).TryGetValue("CustomerEmail", out email);
+                (context.ConversationData).TryGetValue("User.Setting.Name", out string nome);
+                (context.ConversationData).TryGetValue("User.Setting.Email", out string email);
 
-                    capLeadForm.Name = nome;
-                    capLeadForm.Email = email;
-                    capLeadForm.Describe = this.describe;
+                capLeadForm.Name = nome;
+                capLeadForm.Email = email;
+                capLeadForm.Describe = this.describe;
 
 
-                    var form = new FormDialog<CaptureLead>(capLeadForm, CaptureLead.BuildForm, FormOptions.PromptInStart, null);
-                    context.Call<CaptureLead>(form, FormCompleteCallback);
-                }
-                else
-                {
-                   await context.PostAsync(KeyPassAndPhrase._IamHereForHelp);
-                    context.Done<string>(null);
-                }
+                var form = new FormDialog<CaptureLead>(capLeadForm, CaptureLead.BuildForm, FormOptions.PromptInStart, null);
+                context.Call<CaptureLead>(form, FormCompleteCallback);
+
             }
             else
             {
@@ -143,6 +125,8 @@ namespace BotBlog.Dialogs.Dialog
                 context.Done<IMessageActivity>(userFeedback);
 
             }
+
+
 
         }
 
@@ -161,31 +145,30 @@ namespace BotBlog.Dialogs.Dialog
             catch (OperationCanceledException)
             {
                 await context.PostAsync(KeyPassAndPhrase._OkImSorryButIamHere);
-                context.Done<string>(null);
+                context.Done<IMessageActivity>(null);
                 return;
             }
 
             if (order != null)
             {
-                (context.ConversationData).SetValue("CustomerName", order.Name);
-                (context.ConversationData).SetValue("CustomerEmail", order.Email);
-
-
-                
-                ///Envia email direto para o consumidor com copia para vendas
-                _email.SendEmailAsync(order.Name, "Oi, sou eu a **Ian**. Segue as informações sobre o sistema que solicitou",
-                                                "",
-                                                KeyPassAndPhrase._emailVendas,
-                                                order.Email,
-                                                this.templateEmailid,
-                                                null,
-                                                null);
+                (context.ConversationData).SetValue("User.Setting.Name", order.Name);
+                (context.ConversationData).SetValue("User.Setting.Email", order.Email);
 
 
 
 
+                await _email.SendEmailAsync(nameCustomer: order.Name,
+                                           subject: "Oi, sou eu a ***Ian*** da Isco. Segue as informações sobre o sistema que você me solicitou",
+                                           to: order.Email,
+                                           replayto: KeyPassAndPhrase._emailVendas,
+                                           cc: new string[] { KeyPassAndPhrase._emailVendas },
+                                           bcc: new string[] { KeyPassAndPhrase._emailCopiaVendas },
+                                           templateId: this.templateEmailid);
 
-                await context.PostAsync("Ok, já enviei, se precisar pode **me perguntar também**...");
+                await context.PostAsync("Ok, já enviei no seu email, se precisar pode **me perguntar também**...");
+                await context.PostAsync("Ah, tentei lhe enviar um CUPOM de desconto lá, se você fechar comigo...");
+
+
 
 
             }
@@ -193,6 +176,8 @@ namespace BotBlog.Dialogs.Dialog
             {
                 await context.PostAsync(KeyPassAndPhrase._SometinhgWrong);
             }
+
+            
 
             context.Done<string>(null);
 

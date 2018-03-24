@@ -186,7 +186,7 @@
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\Dialog\GetNotUndorstondDialog.cs" />
     <Compile Include="Dialogs\Dialog\GetEmailToSendInfoDialog.cs" />
-    <Compile Include="Dialogs\Dialog\LoadMoreInfoDialog.cs" />
+    <Compile Include="Dialogs\Dialog\SendEmailToCustomerDialog.cs" />
     <Compile Include="Dialogs\Dialog\RegisterBuyDialog.cs" />
     <Compile Include="Dialogs\Luis.ai\LuisBasicDialog.cs" />
     <Compile Include="Dialogs\Dialog\RegisterSuportDialog.cs" />

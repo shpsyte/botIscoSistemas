@@ -15,9 +15,22 @@ namespace Bot4App.Forms
     [Template(TemplateUsage.NotUnderstood, "Hum, esta opção não é valida \"{0}\".")]
     class RegisterBuy
     {
+
+        public RegisterBuy(decimal discont)
+        {
+
+        }
+
+        public RegisterBuy(string nome, string email )
+        {
+            this.Nome = nome;
+            this.Email = email;
+           
+        }
+
         [Describe(Description = "Opção de Pagamento.", Image = "http://www.iscosistemas.com/img/logo.png", Title = "Contratação Sistema", SubTitle = "Melhor custo benefício do mercado")]
         public OpcaoVendas OpcaoVendas;
-
+        
 
         [Prompt("Qual seu CNPJ ?")]
         public string Cnpj;
@@ -39,6 +52,8 @@ namespace Bot4App.Forms
         public string Numero;
         [Prompt("Complemento")]
         public string Complemento;
+
+        
 
 
 
@@ -81,7 +96,6 @@ namespace Bot4App.Forms
                      var cost = 0.0;
                      var data = DateTime.Now.AddDays(7).ToShortDateString();
                      
-
                      switch (state.OpcaoVendas)
                      {
                          case OpcaoVendas.Mensal: cost = 69.90;  break;

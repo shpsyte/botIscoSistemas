@@ -15,6 +15,19 @@ namespace Bot4App.Forms
     [Template(TemplateUsage.NotUnderstood, "Hum, esta opção não é valida \"{0}\".")]
     public class CaptureLead
     {
+
+        public CaptureLead()
+        {
+
+        }
+
+        public CaptureLead(string name, string email, string describe)
+        {
+            this.Describe = describe;
+            this.Name = name;
+            this.Email = email;
+
+        }
         
         [Prompt("Qual o seu Nome ?")]
         [Describe("Nome")]
@@ -38,7 +51,8 @@ namespace Bot4App.Forms
             {
 
             };
-            var builder = new FormBuilder<CaptureLead>();
+             var builder = new FormBuilder<CaptureLead>();
+
             return builder
                .Message("Legal, vou precisar de alguns dados")
                .AddRemainingFields()

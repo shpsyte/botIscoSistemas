@@ -27,13 +27,14 @@ namespace BotBlog.Models
         internal static string _ItsDoneContact = "Ok, enviado, já já aguém entra em contato..";
 
 
-        public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";//"support@iscosistemas.zohosupport.com";
+
+        public readonly static string _emailSuporte = "jose.luiz@iscosistemas.com";
+        public readonly static string _emailSuportTicket = "support@iscosistemas.zohosupport.com";
+        public readonly static string _emailAdmIan  = "jose.luiz@iscosistemas.com";
         public readonly static string _emailVendas = "fernanda.galvao@iscosistemas.com";
-        internal static string _emailCopiaVendas ="jose.luiz@iscosistemas.com";
-
-
-
-
+        public readonly static string _emailCopiaVendas = "";
+        
+         
 
         ///api isco
         public readonly static string endpointCustomer = $"http://www.api.iscosistemas.com.br/v1/Cliente/001/001/";
@@ -53,12 +54,15 @@ namespace BotBlog.Models
         public readonly static string _QnaSubscriptionKey = ConfigurationManager.AppSettings["QnaSubscriptionKey"]; 
         public readonly static double _Score = 0.3;
         public readonly static int _QtyAnswerReturn = 3;
+        public readonly static int _TitleMoreInfo = 1;
+        public readonly static int _TitleInfoSystem = 2;
 
 
-        
-        
+
+
         ///SendGrid & Email
         internal static string _sendGridKey = ConfigurationManager.AppSettings["SendGridKey"];
+        internal static string _templateEmailSalesId  = "ae2e85f2-82e2-4a12-b393-bce14be35fcb";
 
 
 

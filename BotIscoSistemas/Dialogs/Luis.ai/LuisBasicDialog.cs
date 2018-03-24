@@ -37,8 +37,9 @@ namespace Bot4App.Dialogs.Luis.ai
 
         private readonly static string _MsgNotUndertand = KeyPassAndPhrase._MsgNotUndertand;
         private readonly static string _DefaultMsgHelp = KeyPassAndPhrase._MsgHelp;
-        private static string body = $"Olá { _agent }, Favor entrar em contato <b>Urgente</b> com { _person } no Fone { _fone } ";
+        
         SendMsg _sendMsg = new SendMsg();
+        
        
 
 
@@ -51,13 +52,52 @@ namespace Bot4App.Dialogs.Luis.ai
 
         [LuisIntent("")]
         [LuisIntent("None")]
-        public async Task NotUnderstod(IDialogContext context, LuisResult result)
+        [LuisIntent("Qna-Bot")]
+        public async Task QnaDialog(IDialogContext context, LuisResult result)
         {
-            _sendMsg.SendEmailAsync("Customer","Oi, alguém fez esta pergunta e não soube responder...", $" <b> { (context.Activity as Activity).Text } </b>","jose.luiz@iscosistemas.com", "jose.luiz@iscosistemas.com", null);
-            await context.PostAsync($"{_MsgNotUndertand}");
-            await context.Forward(new GetNotUndorstondDialog(), ResumeAfterInfo, context.Activity, CancellationToken.None);
+            await QnaMakerTask(context, true);
+
+            //await _sendMsg.SendEmailAsync(nameCustomer: "Customer", 
+            //                              subject: "Ops.. Não sei que isso quer dizer...", 
+            //                              body: $" <b> { (context.Activity as Activity).Text } </b> Você pode me treinar por favor ? Lá no QNA e no Luis.Ai..", 
+            //                              to: KeyPassAndPhrase._emailAdmIan);
+
+            //await context.PostAsync($"{_MsgNotUndertand}");
+
+            //await context.Forward(new GetNotUndorstondDialog(), ResumeAfterInfo, context.Activity, CancellationToken.None);
+        }
 
 
+
+        [LuisIntent("sense-bot")]
+        public async Task Sense(IDialogContext context, LuisResult result)
+        {
+            await QnaMakerTask(context, false);
+        }
+
+
+        private async Task QnaMakerTask(IDialogContext context, bool ask)
+        {
+            var qnadialog = new QnaIscoSistemas(ask);
+            var messageToForward = context.Activity;
+            var cts = new CancellationTokenSource();
+
+            await context.Forward(qnadialog, AfterQnADialog, messageToForward, cts.Token);
+        }
+
+        private async Task AfterQnADialog(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var userFeedback = await result;
+
+            if (await result != null)
+            {
+                await MessageReceived(context, result);
+                
+            }
+            else
+            {
+                context.Done(true);
+            }
         }
 
 
@@ -78,12 +118,12 @@ namespace Bot4App.Dialogs.Luis.ai
             }else
             { 
 
-                string to = BestDestination.GetBestEmailTo(_agent);
-                string foneto = BestDestination.GetBestFoneTo(_agent);
-                await context.PostAsync($"Ok, já pedi para { _agent } entrarem em contato no fone { _fone }, obrigado ");
+                await _sendMsg.SendEmailAsync(nameCustomer: _person,
+                                              subject: "Favor entrar em contato",
+                                              body: $"Olá { _agent }, Pode por favor entrar em contato com { _person } no Fone { _fone } ", 
+                                              to: BestDestination.GetBestEmailTo(_agent));
 
-                _sendMsg.SendEmailAsync(_person, "Solicitação de Contato",  body, to, to);
-                _sendMsg.SendSmsAsync($"Oi {_agent}, Favor Entrar em contato: {_person} no fone { _fone }", foneto);
+                await context.PostAsync($"Ok, já pedi para { _agent } entrarem em contato no fone { _fone }, obrigado ");
 
             }
 
@@ -93,55 +133,44 @@ namespace Bot4App.Dialogs.Luis.ai
         private async Task GetFone(IDialogContext context, IAwaitable<IMessageActivity> value)
         {
             var fone = await value;
-            string to = BestDestination.GetBestEmailTo(_agent);
-            string foneto = BestDestination.GetBestFoneTo(_agent);
-            _fone = fone.Text;
+            await _sendMsg.SendEmailAsync(nameCustomer: _person,
+                              subject: "Favor entrar em contato",
+                              body: $"Olá { _agent }, Pode por favor entrar em contato com { _person } no Fone { fone.Text } ",
+                              to: BestDestination.GetBestEmailTo(_agent));
 
-           // _sendMsg.SendEmailAsync("Solicitação de Contato", body, to, to);
-           // _sendMsg.SendSmsAsync($"Oi {_agent}, Favor Entrar em contato: {_person} no fone { _fone }", foneto);
-            await context.PostAsync($"Ok, já pedi para { _agent } entrarem em contato no fone { _fone }, obrigado ");
+            await context.PostAsync($"Ok, já pedi para { _agent } entrarem em contato no fone { fone.Text }, obrigado ");
 
             context.Wait(MessageReceived);
         }
 
-
-        [LuisIntent("feature-bot")]
-        public async Task Feature(IDialogContext context, LuisResult result)
-        {
-            await context.Forward(new QnaIscoSistemas(true), ResumeAfterQnA, context.Activity, CancellationToken.None);
-            
-        }
-
-
-        [LuisIntent("sense-bot")]
-        public async Task Sense(IDialogContext context, LuisResult result)
-        {
-            var userQuestion = (context.Activity as Activity).Text;
-            await context.Forward(new QnaIscoSistemas(false), ResumeAfterQnA, context.Activity, CancellationToken.None);
-            //public async Task None(IDialogContext context, LuisResult result) => await context.PostAsync($"{_MsgNotUndertand}\n{_DefaultMsgHelp}");
-        }
+         
 
 
         [LuisIntent("infosystem-bot")]
         public async Task GetInfoAndSendEmail(IDialogContext context, LuisResult result)
         {
-            //await context.PostAsync($" Legal, vou lhe enviar um e-mail contendo o que precisa, você também pode **me perguntar** qualquer coisa..");
-            await context.Forward(new GetEmailToSendInfoDialog("ae2e85f2-82e2-4a12-b393-bce14be35fcb", "Mais informação sistema"), ResumeAfterInfo, context.Activity, CancellationToken.None);
+            
+
+
+            await context.Forward(new GetEmailToSendInfoDialog(
+                        KeyPassAndPhrase._templateEmailSalesId, 
+                        "Mais informação sistema"), ResumeAfterQnA, context.Activity, CancellationToken.None);
 
         }
          
 
-        private async Task ResumeAfterInfo(IDialogContext context, IAwaitable<object> result)
-        {
-            await context.Forward(new QnaIscoSistemas(true), ResumeAfterQnA, context.Activity, CancellationToken.None);
+        //private async Task ResumeAfterInfo(IDialogContext context, IAwaitable<object> result)
+        //{
+        //    await context.Forward(new QnaIscoSistemas(true), ResumeAfterQnA, context.Activity, CancellationToken.None);
 
-        }
+        //}
 
 
         [LuisIntent("buy-bot")]
         public async Task Buy(IDialogContext context, LuisResult result)
         {
-            await context.Forward(new RegisterBuyDialog(0), ResumeAfterQnA, context.Activity, CancellationToken.None);
+             
+            await context.Forward(new RegisterBuyDialog(0), ResumeAfterQnA, context.Activity, new CancellationTokenSource().Token);
         }
 
 
@@ -178,25 +207,10 @@ namespace Bot4App.Dialogs.Luis.ai
         [LuisIntent("thank-bot")]
         public async Task Laugh(IDialogContext context, LuisResult result)
         {
-            //await context.PostAsync($"{ FakeList.GetRandomLaugh()}  { FakeList.GetListRandomEmojiHappy(3) }");
             await context.PostAsync($" Love to help! 😍😍 ");
-            context.Done<string>(null);
+            context.Done(true);
 
-        }
-
-        [LuisIntent("hate-bot")]
-        public async Task Hat(IDialogContext context, LuisResult result) => await context.PostAsync($"{ FakeList.GetRandomHatPhrase()} { FakeList.GetListRandomEmojiAngry(6) }  ");
-
-
-        [LuisIntent("joke-bot")]
-        public async Task Joke(IDialogContext context, LuisResult result) => await context.PostAsync($"{ FakeList.GetRandomJoke()} { FakeList.GetListRandomEmojiHappy(6) } ");
-
-
-
-         
-         
-         
-
+        }  
 
         private async Task ResumeAfterQnA(IDialogContext context, IAwaitable<object> result)
         {
@@ -212,41 +226,7 @@ namespace Bot4App.Dialogs.Luis.ai
            //context.Done<object>(null);
         }
  
-
-        private Attachment GetAudioCard()
-        {
-            return new AudioCard
-            {
-                Title = "I am your father",
-                Subtitle = "Star Wars: Episode V - The Empire Strikes Back",
-                Text = "The Empire Strikes Back (also known as Star Wars: Episode V – The Empire Strikes Back) is a 1980 American epic space opera film directed by Irvin Kershner. Leigh Brackett and Lawrence Kasdan wrote the screenplay, with George Lucas writing the film's story and serving as executive producer. The second installment in the original Star Wars trilogy, it was produced by Gary Kurtz for Lucasfilm Ltd. and stars Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams, Anthony Daniels, David Prowse, Kenny Baker, Peter Mayhew and Frank Oz.",
-                Autostart = true,
-                Image = new ThumbnailUrl
-                {
-                    Url = "https://upload.wikimedia.org/wikipedia/en/3/3c/SW_-_Empire_Strikes_Back.jpg"
-                },
-                Media = new List<MediaUrl>
-                    {
-                        new MediaUrl()
-                        {
-                            Url = "http://www.wavlist.com/movies/004/father.wav"
-                        }
-                    },
-                Buttons = new List<CardAction>
-                    {
-                        new CardAction()
-                        {
-                            Title = "Read More",
-                            Type = ActionTypes.OpenUrl,
-                            Value = "https://en.wikipedia.org/wiki/The_Empire_Strikes_Back"
-                        }
-                    }
-            }.ToAttachment();
-        }
-
-
-
-
+         
 
 
 
