@@ -147,11 +147,14 @@ namespace Bot4App.Services
             if (!string.IsNullOrEmpty(nameCustomer))
                 msg.AddSubstitution("-name-", nameCustomer);
 
-            var Random = new Random();
-            var cupom = Random.Next(100,150);
+            string proximo = (new Random()).Next(1000,5000).ToString();
+            var cupom = string.Concat(
+                    (nameCustomer.Length > 3 ? nameCustomer.Substring(1, 3) : nameCustomer.Substring(1, nameCustomer.Length)),
+                    proximo);
+                     
 
-            msg.AddSubstitution("-cupom-", "AA" + cupom.ToString());
-
+            msg.AddSubstitution("-cupom-", cupom);
+             
 
             return  client.SendEmailAsync(msg);
             //return email;

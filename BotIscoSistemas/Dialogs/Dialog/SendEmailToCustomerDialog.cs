@@ -20,7 +20,7 @@ namespace BotBlog.Dialogs.Dialog
         SendMsg _email = new SendMsg();
         private string Describe;
         private string TemplateEmailId;
-        private string Title;
+       
        
 
         public SendEmailToCustomerDialog()
@@ -28,16 +28,18 @@ namespace BotBlog.Dialogs.Dialog
 
         }
 
-        public SendEmailToCustomerDialog(string _templateEmailid, string _describe, string _title)
+        public SendEmailToCustomerDialog(string _templateEmailid, string _describe)
         {
             this.TemplateEmailId = _templateEmailid;
             this.Describe = _describe;
-            this.Title = _title;
+           
         }
 
         public async Task StartAsync(IDialogContext context)
         {
-            await context.PostAsync(this.Title);
+            await context.PostAsync("Nosso **sistema é bem completo** .. \n " +
+                                    " Deixa eu te enviar um *e-mail com estas informações* ? \n" +
+                                    " É bem rápido...");
 
             var feedback = ((Activity)context.Activity).CreateReply();
 

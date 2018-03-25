@@ -223,7 +223,7 @@ namespace Bot4App.Dialogs.Luis.ai
             //reply.Text = null;
             //await connector.Conversations.ReplyToActivityAsync(reply);
 
-           //context.Done<object>(null);
+            context.Done(true);
         }
  
          

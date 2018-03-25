@@ -62,11 +62,9 @@ namespace Bot4App.QnA
                     (context.ConversationData).SetValue("User.Setting.Interesse", 0);
                     _qtdePerguntas = 0;
 
-                    string title = "Nosso **sistema é bem completo** .. \n " +
-                                    " Deixa eu te enviar um *e-mail com estas informações* ? \n" +
-                                    " É bem rápido...";
+                  
 
-                    var lead = new SendEmailToCustomerDialog(KeyPassAndPhrase._templateEmailSalesId, "Quer que eu lhe envie *mais informação* por e-mail? 🙂", title);
+                    var lead = new SendEmailToCustomerDialog(KeyPassAndPhrase._templateEmailSalesId, "Quer que eu lhe envie *mais informação* por e-mail? 🙂");
 
                     context.Call(lead, ResumeAfterFeedback);
                 }

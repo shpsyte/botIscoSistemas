@@ -62,7 +62,7 @@ namespace BotBlog.Models
 
         ///SendGrid & Email
         internal static string _sendGridKey = ConfigurationManager.AppSettings["SendGridKey"];
-        internal static string _templateEmailSalesId  = "ae2e85f2-82e2-4a12-b393-bce14be35fcb";
+        internal static string _templateEmailSalesId  = "fa4a7bc8-fe06-4ef5-b744-ce1b99b48cb2";
 
 
 
